@@ -46,3 +46,5 @@ COPY --from=quay.io/derailed/k9s /bin/k9s /usr/local/bin/k9s
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends musl fzf htop jq golang-go
+
+RUN curl -s https://fluxcd.io/install.sh | bash
