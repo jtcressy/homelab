@@ -9,12 +9,15 @@ on:
 
 permissions: write-all
 
+env:
+  tf_actions_working_dir: terraform/
+
 jobs:
   terraform:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: terraform/
+        working-directory: ${{ env.tf_actions_working_dir }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
