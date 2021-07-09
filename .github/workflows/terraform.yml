@@ -3,7 +3,9 @@ on:
   push:
     branches: [ main ]
   workflow_dispatch:
-  
+
+permissions: write-all
+
 jobs:
   ensure-terraform-bootstrap:
     runs-on: ubuntu-latest
