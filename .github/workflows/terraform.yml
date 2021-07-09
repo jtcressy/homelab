@@ -70,7 +70,7 @@ jobs:
           #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
           #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
           \`\`\`\n
-          ${steps.validate.outputs.stdout}
+          ${{ steps.validate.outputs.stdout }}
           \`\`\`
           #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
           
