@@ -45,6 +45,9 @@ COPY --from=envcli/kubectx /usr/local/bin/kubens /usr/local/bin/kubens
 COPY --from=quay.io/derailed/k9s /bin/k9s /usr/local/bin/k9s
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends musl fzf htop jq golang-go
+    && apt-get -y install --no-install-recommends musl fzf htop jq golang-go gnupg software-properties-common curl \
+    && curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - \
+    && sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+    && sudo apt-get update && sudo apt-get install terraform vault consul
 
 RUN curl -s https://fluxcd.io/install.sh | bash
