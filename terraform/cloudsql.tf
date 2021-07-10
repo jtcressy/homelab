@@ -1,4 +1,4 @@
-resource google_compute_global_address mysql_us-central1 {
+resource "google_compute_global_address" "mysql_us-central1" {
   name          = "mysql-private-ip"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
@@ -6,17 +6,17 @@ resource google_compute_global_address mysql_us-central1 {
   network       = data.google_compute_network.default_us-central1.self_link
 }
 
-resource google_service_networking_connection mysql_us-central1 {
+resource "google_service_networking_connection" "mysql_us-central1" {
   network                 = data.google_compute_network.default_us-central1.self_link
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.mysql_us-central1.name]
 }
 
-resource random_id mysql_us-central1_name-suffix {
+resource "random_id" "mysql_us-central1_name-suffix" {
   byte_length = 4
 }
 
-resource google_sql_database_instance mysql_us-central1 {
+resource "google_sql_database_instance" "mysql_us-central1" {
   name   = "mysql-private-instance-${random_id.mysql_us-central1_name-suffix.hex}"
   region = "us-central1"
 

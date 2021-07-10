@@ -1,10 +1,10 @@
-resource google_service_account velero {
+resource "google_service_account" "velero" {
   account_id   = "velero"
   display_name = "Velero service account"
   project      = data.google_project.current.project_id
 }
 
-resource google_service_account_iam_binding velero-ksa {
+resource "google_service_account_iam_binding" "velero-ksa" {
   role = "roles/iam.workloadIdentityUser"
   members = [
     "serviceAccount:${data.google_project.current.project_id}.svc.id.goog[velero/velero]"
@@ -12,7 +12,7 @@ resource google_service_account_iam_binding velero-ksa {
   service_account_id = google_service_account.velero.id
 }
 
-resource google_project_iam_custom_role velero-server {
+resource "google_project_iam_custom_role" "velero-server" {
   role_id = "veleroserver"
   title   = "Velero Server"
   project = data.google_project.current.project_id
@@ -28,14 +28,14 @@ resource google_project_iam_custom_role velero-server {
   ]
 }
 
-resource google_project_iam_binding velero-server {
+resource "google_project_iam_binding" "velero-server" {
   members = [
     "serviceAccount:${google_service_account.velero.email}"
   ]
   role = google_project_iam_custom_role.velero-server.id
 }
 
-resource google_storage_bucket_iam_binding velero-server {
+resource "google_storage_bucket_iam_binding" "velero-server" {
   members = [
     "serviceAccount:${google_service_account.velero.email}"
   ]

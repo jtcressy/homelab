@@ -19,7 +19,7 @@
 #   velero_service_account = google_service_account.velero.email
 # }
 
-resource google_container_cluster primary {
+resource "google_container_cluster" "primary" {
   provider       = google-beta
   name           = "primary"
   location       = data.google_compute_zones.current.names[0]
@@ -72,7 +72,7 @@ resource google_container_cluster primary {
   }
 }
 
-resource google_container_node_pool primary_core-system {
+resource "google_container_node_pool" "primary_core-system" {
   provider       = google-beta
   cluster        = google_container_cluster.primary.name
   name_prefix    = "core-system"

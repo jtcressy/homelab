@@ -1,4 +1,4 @@
-resource google_kms_key_ring production {
+resource "google_kms_key_ring" "production" {
   name     = "production-keyring"
   location = "global"
   lifecycle {
@@ -6,7 +6,7 @@ resource google_kms_key_ring production {
   }
 }
 
-resource google_kms_key_ring_iam_binding gke {
+resource "google_kms_key_ring_iam_binding" "gke" {
   key_ring_id = google_kms_key_ring.production.id
   role        = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
@@ -14,7 +14,7 @@ resource google_kms_key_ring_iam_binding gke {
   ]
 }
 
-resource google_kms_crypto_key etcd {
+resource "google_kms_crypto_key" "etcd" {
   name            = "etcd"
   key_ring        = google_kms_key_ring.production.id
   rotation_period = "7776000s"
@@ -26,7 +26,7 @@ resource google_kms_crypto_key etcd {
 
 
 ## Regional Keyrings
-resource google_kms_key_ring production_us-central1 {
+resource "google_kms_key_ring" "production_us-central1" {
   name     = "production-keyring"
   location = "us-central1"
   lifecycle {
@@ -34,7 +34,7 @@ resource google_kms_key_ring production_us-central1 {
   }
 }
 
-resource google_kms_key_ring_iam_binding gke_us-central1 {
+resource "google_kms_key_ring_iam_binding" "gke_us-central1" {
   key_ring_id = google_kms_key_ring.production_us-central1.id
   role        = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   members = [
@@ -42,7 +42,7 @@ resource google_kms_key_ring_iam_binding gke_us-central1 {
   ]
 }
 
-resource google_kms_crypto_key etcd_us-central1 {
+resource "google_kms_crypto_key" "etcd_us-central1" {
   name            = "etcd"
   key_ring        = google_kms_key_ring.production_us-central1.id
   rotation_period = "7776000s"
