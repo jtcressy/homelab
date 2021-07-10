@@ -86,6 +86,7 @@ resource "google_container_node_pool" "primary_core-system" {
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
     }
+    tags = []
     oauth_scopes = [
       "storage-ro",
       "logging-write",
