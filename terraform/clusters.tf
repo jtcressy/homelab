@@ -88,7 +88,9 @@ resource "google_container_node_pool" "primary_core-system" {
     }
     tags = []
     kubelet_config {
-      cpu_cfs_quota = false
+      cpu_manager_policy   = "static"
+      cpu_cfs_quota        = true
+      cpu_cfs_quota_period = "100us"
     }
     oauth_scopes = [
       "storage-ro",
