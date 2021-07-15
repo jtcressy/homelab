@@ -87,6 +87,7 @@ resource "google_container_node_pool" "primary_core-system" {
       node_metadata = "GKE_METADATA_SERVER"
     }
     tags = []
+    image_type = "COS_CONTAINERD"
     kubelet_config {
       cpu_manager_policy   = "static"
       cpu_cfs_quota        = false
