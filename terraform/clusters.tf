@@ -87,6 +87,9 @@ resource "google_container_node_pool" "primary_core-system" {
       node_metadata = "GKE_METADATA_SERVER"
     }
     tags = []
+    kubelet_config {
+      cpu_cfs_quota = false
+    }
     oauth_scopes = [
       "storage-ro",
       "logging-write",
