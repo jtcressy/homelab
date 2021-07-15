@@ -50,6 +50,12 @@ resource "google_container_cluster" "primary" {
     http_load_balancing {
       disabled = true
     }
+    config_connector_config {
+      enabled = true
+    }
+    gce_persistent_disk_csi_driver_config {
+      enabled = true
+    }
   }
 
   database_encryption {
