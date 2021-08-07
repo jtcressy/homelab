@@ -12,6 +12,9 @@ terraform {
     random = {
       source = "hashicorp/random"
     }
+    zerotier = {
+      source = "zerotier/zerotier"
+    }
   }
   # required_version = ">=1.0"
   # required_version = ">= 0.13"
