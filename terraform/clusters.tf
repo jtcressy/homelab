@@ -82,7 +82,7 @@ resource "google_container_node_pool" "primary_core-system" {
   provider       = google-beta
   cluster        = google_container_cluster.primary.name
   for_each = toset(slice(data.google_compute_zones.current.names, 0, 3))
-  name_prefix    = "core-system-${each.key}"
+  name_prefix    = "core-system-${substr(each.key, -1, 0)}-"
   autoscaling {
     min_node_count = 1
     max_node_count = 3
