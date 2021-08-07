@@ -5,3 +5,5 @@ provider "google" {
 provider "google-beta" {
   region = "us-central1"
 }
+
+provider "zerotier" {}

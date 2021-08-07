@@ -11,6 +11,7 @@ permissions: write-all
 
 env:
   tf_actions_working_dir: terraform/
+  ZEROTIER_CENTRAL_TOKEN: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
 
 jobs:
   terraform:
