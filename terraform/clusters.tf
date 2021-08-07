@@ -81,10 +81,14 @@ resource "google_container_cluster" "primary" {
 resource "google_container_node_pool" "primary_core-system" {
   provider       = google-beta
   cluster        = google_container_cluster.primary.name
-  name_prefix    = "core-system"
-  node_count     = 1
+  for_each = toset(slice(data.google_compute_zones.current.names, 0, 3))
+  name_prefix    = "core-system_${each.key}"
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 3
+  }
   location       = google_container_cluster.primary.location
-  node_locations = slice(data.google_compute_zones.current.names, 0, 3)
+  node_locations = [each.key]
   node_config {
     preemptible  = true
     machine_type = "e2-small"
