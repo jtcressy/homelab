@@ -92,11 +92,11 @@ resource "google_container_node_pool" "primary_core-system" {
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
     }
-    tags = []
+    tags       = []
     image_type = "COS_CONTAINERD"
     kubelet_config {
-      cpu_manager_policy   = "static"
-      cpu_cfs_quota        = false
+      cpu_manager_policy = "static"
+      cpu_cfs_quota      = false
     }
     oauth_scopes = [
       "storage-ro",
