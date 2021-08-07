@@ -29,7 +29,7 @@ resource "zerotier_network" "jtcressy_net" {
 
   assignment_pool {
     start = "172.23.0.1"
-    end = "172.23.255.254"
+    end   = "172.23.255.254"
   }
 
   route {
