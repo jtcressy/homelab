@@ -33,6 +33,10 @@ resource "zerotier_network" "jtcressy_net" {
   }
 
   route {
+    target = "172.23.0.0/16"
+  }
+
+  route {
     target = "192.168.0.0/16"
     via    = "172.23.20.1"
   }
