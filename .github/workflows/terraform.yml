@@ -6,6 +6,8 @@ on:
     - 'terraform/**'
   workflow_dispatch:
   pull_request:
+    paths:
+    - 'terraform/**'
 
 permissions: write-all
 
