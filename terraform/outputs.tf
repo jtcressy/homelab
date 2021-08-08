@@ -23,9 +23,16 @@ output "zerotier_identities" {
   sensitive = true
 }
 
-output "zerotier_docker_command" {
+output "zerotier_setup_command" {
   value = {
-    home = "docker run -d --name=zerotier-one --privileged --cap-add NET_ADMIN --device /dev/net/tun -e ZEROTIER_IDENTITY_PUBLIC='${zerotier_identity.home.public_key}' -e ZEROTIER_IDENTITY_SECRET='${zerotier_identity.home.private_key}' zerotier/zerotier:latest ${zerotier_network.jtcressy_net.id}"
+    home = <<-EOT
+    mkdir -p /mnt/data/zerotier-one && \
+    echo "${zerotier_network.jtcressy_net.id}=eth12" > /mnt/data/zerotier-one/devicemap && \
+    echo "${zerotier_identity.home.public_key}" > /mnt/data/zerotier-one/identity.public && \
+    echo "${zerotier_identity.home.private_key}" > /mnt/data/zerotier-one/identity.secret && \
+    docker run -d --name=zerotier-one --device /dev/net/tun -v /mnt/data/zerotier-one:/var/lib/zerotier-one --net=host --cap-add=NET_ADMIN --cap-add=SYS_ADMIN bltavares/zerotier && \
+    docker exec zerotier-one zerotier-cli join ${zerotier_network.jtcressy_net.id}
+    EOT
   }
   sensitive = true
 }

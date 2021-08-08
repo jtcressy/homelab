@@ -5,21 +5,6 @@ resource "zerotier_network" "jtcressy_net" {
   enable_broadcast = true
   private          = true
   flow_rules       = <<-EOT
-  #
-  # Allow only IPv4, IPv4 ARP, and IPv6 Ethernet frames.
-  #
-  drop
-    not ethertype ipv4
-    and not ethertype arp
-    and not ethertype ipv6
-  ;
-  # This prevents IP spoofing but also blocks manual IP management at the OS level and
-  # bridging unless special rules to exempt certain hosts or traffic are added before
-  # this rule.
-  #
-  drop
-    not chr ipauth
-  ;
   accept;
   EOT
 
@@ -51,4 +36,5 @@ resource "zerotier_member" "home" {
   no_auto_assign_ips = true
   ip_assignments     = ["172.23.20.1"]
   authorized         = true
+  allow_ethernet_bridging = true
 }
