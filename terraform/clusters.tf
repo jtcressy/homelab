@@ -91,7 +91,7 @@ resource "google_container_node_pool" "primary_core-system" {
   node_locations = [each.key]
   node_config {
     preemptible  = true
-    machine_type = "e2-small"
+    machine_type = "e2-medium"
     disk_size_gb = 20
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
