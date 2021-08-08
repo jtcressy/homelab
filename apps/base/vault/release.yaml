@@ -1,0 +1,69 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  releaseName: vault
+  chart:
+    spec:
+      chart: vault
+      sourceRef:
+        kind: HelmRepository
+        name: hashicorp
+        namespace: flux-system
+  interval: 5m
+  install:
+    remediation:
+      retries: 3
+  values:
+    global:
+      enabled: true
+    server:
+      enabled: true
+      updateStrategyType: RollingUpdate
+      logFormat: json
+      resources:
+        requests:
+          memory: 500Mi
+          cpu: 250m
+        limits:
+          memory: 500Mi
+          cpu: 250m
+      dataStorage:
+        enabled: false
+      ha:
+        enabled: true
+        replicas: 3
+        config: |
+          ui = true
+
+          listener "tcp" {
+            tls_disable = 1
+            address = "[::]:8200"
+            cluster_address = "[::]:8201"
+          }
+
+          api_addr = "https://vault-active.vault.cluster.local"
+
+          service_registration "kubernetes" {}
+
+          seal "gcpckms" {
+            project     = "jtcressy-net-235001"
+            region      = "global"
+            key_ring    = "vault-production"
+            crypto_key  = "vault-key"
+          }
+
+          storage "gcs" {
+            bucket = "vault-jtcressy-net"
+            ha_enabled = "true"
+          }
+
+      extraEnvironmentVars:
+        GOOGLE_REGION: global
+        GOOGLE_PROJECT: jtcressy-net-235001
+      serviceAccount:
+        name: vault-ksa
+        annotations:
+          iam.gke.io/gcp-service-account: vault-server@jtcressy-net-235001.iam.gserviceaccount.com

@@ -1,0 +1,26 @@
+apiVersion: kms.cnrm.cloud.google.com/v1beta1
+kind: KMSKeyRing
+metadata:
+  name: vault-production
+  namespace: vault
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+spec:
+  location: global
+---
+apiVersion: kms.cnrm.cloud.google.com/v1beta1
+kind: KMSCryptoKey
+metadata:
+  name: vault-key
+  namespace: vault
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+spec:
+  keyRingRef:
+    name: vault-production
+    namespace: vault
+  purpose: ENCRYPT_DECRYPT
+  rotationPeriod: 31536000s
+  versionTemplate:
+    algorithm: GOOGLE_SYMMETRIC_ENCRYPTION
+    protectionLevel: SOFTWARE
