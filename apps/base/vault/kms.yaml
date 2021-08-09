@@ -4,6 +4,7 @@ metadata:
   name: vault-production
   namespace: vault
   annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
     cnrm.cloud.google.com/deletion-policy: abandon
 spec:
   location: global
@@ -14,6 +15,7 @@ metadata:
   name: vault-key
   namespace: vault
   annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
     cnrm.cloud.google.com/deletion-policy: abandon
 spec:
   keyRingRef:

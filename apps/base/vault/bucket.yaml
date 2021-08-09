@@ -5,3 +5,4 @@ metadata:
   namespace: vault
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001

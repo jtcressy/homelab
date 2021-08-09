@@ -3,5 +3,7 @@ kind: IAMServiceAccount
 metadata:
   name: vault-server
   namespace: vault
+  annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
 spec:
   displayName: service account for bucket and kms access

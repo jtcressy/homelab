@@ -3,6 +3,8 @@ kind: IAMPolicy
 metadata:
   name: vault-gcs
   namespace: vault
+  annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
 spec:
   resourceRef:
     apiVersion: storage.cnrm.cloud.google.com/v1alpha2
@@ -19,6 +21,8 @@ kind: IAMPolicy
 metadata:
   name: vault-kms
   namespace: vault
+  annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
 spec:
   resourceRef:
     apiVersion: kms.cnrm.cloud.google.com/v1beta1
@@ -35,6 +39,8 @@ kind: IAMPolicy
 metadata:
   name: sa-wi-policy-vault
   namespace: vault
+  annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
 spec:
   resourceRef:
     apiVersion: iam.cnrm.cloud.google.com/v1alpha1
