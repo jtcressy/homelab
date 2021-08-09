@@ -53,4 +53,4 @@ spec:
   bindings:
     - role: roles/iam.workloadIdentityUser
       members:
-        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
+        - serviceAccount:jtcressy-net-235001.svc.id.goog[vault/vault-ksa]
