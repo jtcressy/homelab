@@ -1,0 +1,7 @@
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMServiceAccount
+metadata:
+  name: vault-server
+  namespace: vault
+spec:
+  displayName: service account for bucket and kms access

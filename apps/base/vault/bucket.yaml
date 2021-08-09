@@ -1,0 +1,7 @@
+apiVersion: storage.cnrm.cloud.google.com/v1alpha2
+kind: StorageBucket
+metadata:
+  name: vault-jtcressy-net
+  namespace: vault
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon

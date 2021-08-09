@@ -1,0 +1,50 @@
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: vault-gcs
+  namespace: vault
+spec:
+  resourceRef:
+    apiVersion: storage.cnrm.cloud.google.com/v1alpha2
+    kind: StorageBucket
+    name: vault-jtcressy-net
+    namespace: vault
+  bindings:
+    - role: roles/storage.admin
+      members:
+        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
+---
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: vault-kms
+  namespace: vault
+spec:
+  resourceRef:
+    apiVersion: kms.cnrm.cloud.google.com/v1beta1
+    kind: KMSCryptoKey
+    name: vault-key
+    namespace: vault
+  bindings:
+    - role: roles/cloudkms.cryptoKeyEncrypterDecrypter
+      members:
+        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
+    - role: cloudkms.cryptoKeys.get
+      members:
+        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
+---
+apiVersion: iam.cnrm.cloud.google.com/v1alpha1
+kind: IAMPolicy
+metadata:
+  name: sa-wi-policy-vault
+  namespace: vault
+spec:
+  resourceRef:
+    apiVersin: iam.cnrm.cloud.google.com/v1alpha1
+    kind: IAMServiceAccount
+    name: vault-server
+    namespace: vault
+  bindings:
+    - role: roles/iam.workloadIdentityUser
+      members:
+        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
