@@ -30,6 +30,16 @@ spec:
         limits:
           memory: 500Mi
           cpu: 250m
+      ingress:
+        enabled: true
+        labels:
+          app: vault
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: vault.jtcressy.net
+          kubernetes.io/ingress.class: ambassador
+        activeService: true
+        hosts:
+          - host: vault.jtcressy.net
       dataStorage:
         enabled: false
       ha:
