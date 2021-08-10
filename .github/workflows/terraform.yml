@@ -21,8 +21,6 @@ jobs:
     services:
       zerotier-one:
         image: zerotier/zerotier:latest
-        credentials:
-          
         env:
           ZEROTIER_API_SECRET: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
           ZEROTIER_IDENTITY_PUBLIC: ${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}
