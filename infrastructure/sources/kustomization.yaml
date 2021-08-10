@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: flux-system
 resources:
   - hashicorp.yaml
-  - gke-gateway.yaml
+  - gateway-api.yaml
