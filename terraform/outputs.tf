@@ -27,6 +27,18 @@ output "zerotier_identities" {
         docker exec zerotier-one zerotier-cli join ${zerotier_network.jtcressy_net.id}
         EOT
     }
+    gh_actions = {
+      id = zerotier_identity.gh_actions.id
+      private = zerotier_identity.gh_actions.private_key
+      public = zerotier_identity.gh_actions.public_key
+      setup_command = <<-EOT
+        docker run -d --name=zerotier-one --device /dev/net/tun --net=host --cap-add=NET_ADMIN --cap-add=SYS_ADMIN \
+          -e ZEROTIER_API_SECRET="$ZEROTIER_CENTRAL_TOKEN" \
+          -e ZEROTIER_IDENTITY_PUBLIC="${zerotier_identity.gh_actions.public_key}" \
+          -e ZEROTIER_IDENTITY_SECRET="${zerotier_identity.gh_actions.private_key}" \
+          zerotier/zerotier:latest ${zerotier_network.jtcressy_net.id}
+      EOT
+    }
   }
   sensitive = true
 }
