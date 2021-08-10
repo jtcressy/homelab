@@ -13,6 +13,7 @@ permissions: write-all
 
 env:
   tf_actions_working_dir: terraform/
+  TF_VAR_gh_pat: ${{ secrets.GH_PAT }}
   ZEROTIER_CENTRAL_TOKEN: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
 
 jobs:
@@ -34,6 +35,14 @@ jobs:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
     steps:
+    - name: Connect zerotier
+      run: docker run -d --name zerotier-one --network=host --cap-add=NET_ADMIN --device /dev/net/tun -e ZEROTIER_IDENTITY_PUBLIC="${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}" -e ZEROTIER_IDENTITY_SECRET="${{ secrets.ZEROTIER_IDENTITY_SECRET }}" zerotier/zerotier:latest e4da7455b2bf226b
+      continue-on-error: true
+
+    - name: Check zerotier networks
+      run: docker exec zerotier-one zerotier-cli listnetworks
+      continue-on-error: true
+
     - name: Checkout
       uses: actions/checkout@v2
 
