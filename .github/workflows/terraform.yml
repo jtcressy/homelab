@@ -35,19 +35,19 @@ jobs:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
     steps:
-    - name: Connect zerotier
-      uses: addnab/docker-run-action@v3
-      with:
-        image: zerotier/zerotier:latest
-        docker_network: host
-        options: >-
-          --cap-add=NET_ADMIN
-          --device /dev/net/tun
-          -e ZEROTIER_API_SECRET="${{ secrets.ZEROTIER_CENTRAL_TOKEN }}"
-          -e ZEROTIER_IDENTITY_PUBLIC="${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}"
-          -e ZEROTIER_IDENTITY_SECRET="${{ secrets.ZEROTIER_IDENTITY_SECRET }}"
-        shell: /entrypoint.sh
-        run: e4da7455b2bf226b
+    # - name: Connect zerotier
+    #   uses: addnab/docker-run-action@v3
+    #   with:
+    #     image: zerotier/zerotier:latest
+    #     docker_network: host
+    #     options: >-
+    #       --cap-add=NET_ADMIN
+    #       --device /dev/net/tun
+    #       -e ZEROTIER_API_SECRET="${{ secrets.ZEROTIER_CENTRAL_TOKEN }}"
+    #       -e ZEROTIER_IDENTITY_PUBLIC="${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}"
+    #       -e ZEROTIER_IDENTITY_SECRET="${{ secrets.ZEROTIER_IDENTITY_SECRET }}"
+    #     shell: /entrypoint.sh
+    #     run: e4da7455b2bf226b
 
     - name: Checkout
       uses: actions/checkout@v2
