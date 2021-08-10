@@ -18,18 +18,18 @@ env:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    services:
-      zerotier-one:
-        image: zerotier/zerotier:latest
-        env:
-          ZEROTIER_API_SECRET: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
-          ZEROTIER_IDENTITY_PUBLIC: ${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}
-          ZEROTIER_IDENTITY_SECRET: ${{ secrets.ZEROTIER_IDENTITY_SECRET }}
-        options: >-
-          --network=host
-          --cap-add=NET_ADMIN
-          --device /dev/net/tun
-          e4da7455b2bf226b
+    # services:
+    #   zerotier-one:
+    #     image: zerotier/zerotier:latest
+    #     env:
+    #       ZEROTIER_API_SECRET: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+    #       ZEROTIER_IDENTITY_PUBLIC: ${{ secrets.ZEROTIER_IDENTITY_PUBLIC }}
+    #       ZEROTIER_IDENTITY_SECRET: ${{ secrets.ZEROTIER_IDENTITY_SECRET }}
+    #     options: >-
+    #       --network=host
+    #       --cap-add=NET_ADMIN
+    #       --device /dev/net/tun
+    #       e4da7455b2bf226b
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
