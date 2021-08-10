@@ -15,9 +15,9 @@ output "zerotier_network_id" {
 output "zerotier_identities" {
   value = {
     home = {
-      id = zerotier_identity.home.id
-      private = zerotier_identity.home.private_key
-      public = zerotier_identity.home.public_key
+      id            = zerotier_identity.home.id
+      private       = zerotier_identity.home.private_key
+      public        = zerotier_identity.home.public_key
       setup_command = <<-EOT
         mkdir -p /mnt/data/zerotier-one && \
         echo "${zerotier_network.jtcressy_net.id}=eth12" > /mnt/data/zerotier-one/devicemap && \

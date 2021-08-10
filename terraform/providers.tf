@@ -7,3 +7,7 @@ provider "google-beta" {
 }
 
 provider "zerotier" {}
+
+provider "github" {
+  owner = "jtcressy"
+}

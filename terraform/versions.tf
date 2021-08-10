@@ -15,6 +15,10 @@ terraform {
     zerotier = {
       source = "zerotier/zerotier"
     }
+    github = {
+      source = "integrations/github"
+      version = "~> 4.0"
+    }
   }
   # required_version = ">=1.0"
   # required_version = ">= 0.13"
