@@ -10,6 +10,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/production
+  path: ./apps/cloud
   prune: true
   validation: client
