@@ -35,8 +35,7 @@ spec:
         labels:
           app: vault
         annotations:
-          external-dns.alpha.kubernetes.io/hostname: vault.jtcressy.net
-          kubernetes.io/ingress.class: ambassador
+          kubernetes.io/ingress.class: traefik
         activeService: true
         hosts:
           - host: vault.jtcressy.net
