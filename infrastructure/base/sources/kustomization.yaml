@@ -4,3 +4,4 @@ namespace: flux-system
 resources:
   - hashicorp.yaml
   - gateway-api.yaml
+  - traefik.yaml
