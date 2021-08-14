@@ -4,3 +4,5 @@ resources:
   - ../base/sources
   - ../base/gateway-api
   - ../base/traefik
+patchesStrategicMerge:
+  - ./traefik/traefik-values.yaml
