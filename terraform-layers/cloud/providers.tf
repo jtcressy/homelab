@@ -8,7 +8,7 @@ provider "google-beta" {
 
 provider "zerotier" {}
 
-variable gh_pat {}
+variable "gh_pat" {}
 
 provider "github" {
   token = var.gh_pat
