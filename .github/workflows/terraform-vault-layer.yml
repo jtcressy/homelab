@@ -19,7 +19,7 @@ env:
   VAULT_FORMAT: json
 
 jobs:
-  terraform-cloud-layer:
+  terraform-vault-layer:
     runs-on: ubuntu-latest
     defaults:
       run:
