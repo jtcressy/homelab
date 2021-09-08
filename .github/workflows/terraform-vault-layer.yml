@@ -1,43 +1,42 @@
-name: Terraform
+name: Terraform Layers - Vault
 on:
   push:
     branches: [ main ]
     paths:
-    - 'terraform/**'
+    - 'terraform-layers/vault/**'
+    - '.github/workflows/terraform-vault-layer.yml'
   workflow_dispatch:
   pull_request:
     paths:
-    - 'terraform/**'
+    - 'terraform-layers/vault/**'
+    - '.github/workflows/terraform-vault-layer.yml'
 
 permissions: write-all
 
 env:
-  tf_actions_working_dir: terraform/
-  TF_VAR_gh_pat: ${{ secrets.GH_PAT }}
-  ZEROTIER_CENTRAL_TOKEN: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
+  tf_actions_working_dir: terraform-layers/
+  VAULT_ADDR: https://vault.jtcressy.net/
+  VAULT_FORMAT: json
 
 jobs:
-  terraform:
+  terraform-cloud-layer:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.tf_actions_working_dir }}
+        working-directory: ${{ env.tf_actions_working_dir }}/vault
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: Setup Vault CLI
+      uses: innovationnorway/setup-vault@v1.0.3
+
+    - name: Check for Running Vault
+      run: vault status
 
     - name: Tailscale
       uses: tailscale/github-action@v1
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
-    - run: |
-        sudo /usr/bin/tailscale up --accept-dns --accept-routes --hostname=github-$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER
-        sudo /usr/bin/tailscale status
-        sudo /usr/bin/tailscale netcheck
-        for host in $(sudo /usr/bin/tailscale status --json | jq -r '.Peer[].DNSName'); do echo $host":" && sudo /usr/bin/tailscale ping --c 4 "$host" || true; done
-    - run: |
-        sudo apt install netstat-nat -y
-        netstat -nr
 
     - name: Set up gcloud Cloud SDK environment
       uses: google-github-actions/setup-gcloud@v0.2.0
@@ -45,11 +44,12 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
+
     - name: Query .terraform-version
       id: terraform-version
       uses: juliangruber/read-file-action@v1
       with:
-        path: ./terraform/.terraform-version
+        path: .terraform-version
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
@@ -115,31 +115,3 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
       run: terraform apply -auto-approve
-
-  # ensure-fluxcd:
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #   steps:
-  #     - uses: actions/checkout@v2
-      
-  #     - name: Setup gcloud Cloud SDK environment
-  #       uses: google-github-actions/setup-gcloud@v0.2.0
-  #       with:
-  #         project_id: ${{ secrets.GCP_PROJECT_ID }}
-  #         service_account_key: ${{ secrets.GCP_SA_KEY }}
-  #         export_default_credentials: true
-
-  #     - name: Get GKE Credentials
-  #       id: get-credentials
-  #       uses: google-github-actions/get-gke-credentials@main
-  #       with:
-  #         cluster_name: primary
-  #         location: us-central1-a
-
-  #     - name: Setup Flux CLI
-  #       uses: fluxcd/flux2/action@main
-
-  #     - name: Fluxcd Check
-  #       run: flux check
-          
