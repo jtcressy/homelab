@@ -31,7 +31,7 @@ jobs:
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
     - run: |
-        sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags=tag:github-actions --hostname=github-$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER
+        sudo /usr/bin/tailscale up --accept-dns --accept-routes --hostname=github-$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER
         sudo /usr/bin/tailscale status
         sudo /usr/bin/tailscale netcheck
         for host in $(sudo /usr/bin/tailscale status --json | jq -r '.Peer[].DNSName'); do echo $host":" && sudo /usr/bin/tailscale ping --c 4 "$host" || true; done
