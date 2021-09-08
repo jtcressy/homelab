@@ -16,6 +16,8 @@ permissions: write-all
 env:
   tf_actions_working_dir: terraform-layers/vault/
   VAULT_ADDR: https://vault.jtcressy.net/
+  TF_VAR_vault_self_approle_id: ${{ secrets.VAULT_APPROLE_ID }}
+  TF_VAR_vault_self_approle_secret: ${{ secrets.VAULT_APPROLE_SECRET }}
 
 jobs:
   terraform-vault-layer:
