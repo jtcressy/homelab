@@ -1,7 +1,7 @@
 resource "vault_auth_backend" "approle" {
   type = "approle"
 
-  tune = {
+  tune {
     default_lease_ttl  = "1h"
     listing_visibility = "hidden"
     max_lease_ttl      = "7d"
