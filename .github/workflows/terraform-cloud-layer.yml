@@ -44,7 +44,7 @@ jobs:
       id: terraform-version
       uses: juliangruber/read-file-action@v1
       with:
-        path: $PWD/.terraform-version
+        path: ${{ env.PWD }}/.terraform-version
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1
