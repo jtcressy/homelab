@@ -28,9 +28,6 @@ jobs:
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
 
-    - name: Verify Networking
-      run: ls /usr/bin | grep tail
-
     - name: Checkout
       uses: actions/checkout@v2
 
