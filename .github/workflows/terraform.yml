@@ -27,10 +27,10 @@ jobs:
       uses: tailscale/github-action@v1
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
-      run: |
-        sudo tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
-        sudo tailscale status
-        sudo tailscale netcheck
+    - run: |
+        sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
+        sudo /usr/bin/tailscale status
+        sudo /usr/bin/tailscale netcheck
 
     - name: Checkout
       uses: actions/checkout@v2
