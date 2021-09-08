@@ -1,8 +1,6 @@
 terraform {
-  backend "remote" {
-    organization = "jtcressy"
-    workspaces {
-      name = "homelab"
-    }
+  backend "gcs" {
+    bucket = "terraform-state-jtcressy-net"
+    prefix = "homelab/cloud"
   }
 }
