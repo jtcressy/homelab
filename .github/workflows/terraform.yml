@@ -23,18 +23,17 @@ jobs:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
     steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
     - name: Tailscale
       uses: tailscale/github-action@v1
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
-    - run: ls /usr/bin | grep tail
-    # - run: |
-    #     sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
-    #     sudo /usr/bin/tailscale status
-    #     sudo /usr/bin/tailscale netcheck
-
-    - name: Checkout
-      uses: actions/checkout@v2
+    - run: |
+        sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
+        sudo /usr/bin/tailscale status
+        sudo /usr/bin/tailscale netcheck
 
     - name: network check
       run: |
