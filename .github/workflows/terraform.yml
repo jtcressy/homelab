@@ -31,7 +31,7 @@ jobs:
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
     - run: |
-        sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
+        sudo /usr/bin/tailscale up --accept-dns --accept-routes --advertise-tags=tag:github-actions --hostname=github-$(hostname)
         sudo /usr/bin/tailscale status
         sudo /usr/bin/tailscale netcheck
 
