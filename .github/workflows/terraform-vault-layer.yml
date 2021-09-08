@@ -16,7 +16,6 @@ permissions: write-all
 env:
   tf_actions_working_dir: terraform-layers/vault/
   VAULT_ADDR: https://vault.jtcressy.net/
-  VAULT_FORMAT: json
 
 jobs:
   terraform-vault-layer:
