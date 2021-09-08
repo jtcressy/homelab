@@ -32,7 +32,7 @@ jobs:
       run: |
         curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
         sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
-        sudo apt-get -qq update && sudo apt-get -yqq install vault
+        sudo apt-get -q -o=Dpkg::Use-Pty=0 update && sudo apt-get -yq -o=Dpkg::Use-Pty=0 install vault
 
     - name: Check for Running Vault
       run: vault status
