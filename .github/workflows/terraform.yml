@@ -29,7 +29,7 @@ jobs:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
 
     - name: Verify Networking
-      run: tailscale status && tailscale netcheck
+      run: which tailscale
 
     - name: Checkout
       uses: actions/checkout@v2
