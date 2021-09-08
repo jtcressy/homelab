@@ -14,7 +14,7 @@ on:
 permissions: write-all
 
 env:
-  tf_actions_working_dir: terraform-layers/
+  tf_actions_working_dir: terraform-layers/cloud/
   TF_VAR_gh_pat: ${{ secrets.GH_PAT }}
   ZEROTIER_CENTRAL_TOKEN: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
 
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.tf_actions_working_dir }}/cloud
+        working-directory: ${{ env.tf_actions_working_dir }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -44,7 +44,7 @@ jobs:
       id: terraform-version
       uses: juliangruber/read-file-action@v1
       with:
-        path: .terraform-version
+        path: ./.terraform-version
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v1

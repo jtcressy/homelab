@@ -14,7 +14,7 @@ on:
 permissions: write-all
 
 env:
-  tf_actions_working_dir: terraform-layers/
+  tf_actions_working_dir: terraform-layers/vault/
   VAULT_ADDR: https://vault.jtcressy.net/
   VAULT_FORMAT: json
 
@@ -23,10 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.tf_actions_working_dir }}/vault
+        working-directory: ${{ env.tf_actions_working_dir }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
     - name: Setup Vault CLI
       uses: innovationnorway/setup-vault@v1.0.3
 
