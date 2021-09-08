@@ -27,16 +27,22 @@ jobs:
       uses: tailscale/github-action@v1
       with:
         authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
+      run: |
+        sudo tailscale up --accept-dns --accept-routes --advertise-tags tag:github-actions
+        sudo tailscale status
+        sudo tailscale netcheck
 
     - name: Checkout
       uses: actions/checkout@v2
-      
+
     - name: network check
       run: |
-        sudo apt install iproute2 inetutils-ping
+        sudo apt install iproute2 inetutils-ping traceroute
         ip address show
         ip route show
         ping 192.168.20.1 -c 4 || true
+        ping 192.168.20.250 || true
+        traceroute 192.168.20.250 || true
 
     - name: Set up gcloud Cloud SDK environment
       uses: google-github-actions/setup-gcloud@v0.2.0
