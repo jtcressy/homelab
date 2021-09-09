@@ -16,9 +16,6 @@ resource "vault_jwt_auth_backend" "google-oidc" {
     audit_non_hmac_request_keys  = []
     audit_non_hmac_response_keys = []
   }
-  lifecycle {
-    ignore_changes = [oidc_client_secret]
-  }
 }
 
 resource "vault_jwt_auth_backend_role" "google-oidc-default" {
