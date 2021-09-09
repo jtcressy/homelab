@@ -5,12 +5,12 @@ supply this token (or a short-lived orphan token) via "-var=vault_bootstrap_toke
 OR via "TF_VAR_vault_bootstrap_token=<token>" environment variable.
 */
 provider "vault" {
-  token   = var.vault_bootstrap_token
+  token = var.vault_bootstrap_token
   dynamic "auth_login" {
     for_each = length(var.vault_bootstrap_token) > 0 ? [] : [{
       path = "auth/approle/login"
       parameters = {
-        role_id = var.vault_self_approle_id
+        role_id   = var.vault_self_approle_id
         secret_id = var.vault_self_approle_secret
       }
     }]

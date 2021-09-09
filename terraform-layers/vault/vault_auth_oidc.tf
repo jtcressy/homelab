@@ -1,4 +1,4 @@
-resource vault_jwt_auth_backend "google-oidc" {
+resource "vault_jwt_auth_backend" "google-oidc" {
   path               = "google-oidc"
   type               = "oidc"
   oidc_discovery_url = "https://accounts.google.com"
@@ -7,13 +7,13 @@ resource vault_jwt_auth_backend "google-oidc" {
   bound_issuer       = "https://accounts.google.com"
   default_role       = "default"
   tune {
-    listing_visibility = "unauth"
-    default_lease_ttl = "168h"
-    max_lease_ttl = "720h"
-    token_type = "default-service"
-    passthrough_request_headers = []
-    allowed_response_headers = []
-    audit_non_hmac_request_keys = []
+    listing_visibility           = "unauth"
+    default_lease_ttl            = "168h"
+    max_lease_ttl                = "720h"
+    token_type                   = "default-service"
+    passthrough_request_headers  = []
+    allowed_response_headers     = []
+    audit_non_hmac_request_keys  = []
     audit_non_hmac_response_keys = []
   }
   lifecycle {
@@ -21,7 +21,7 @@ resource vault_jwt_auth_backend "google-oidc" {
   }
 }
 
-resource vault_jwt_auth_backend_role google-oidc-default {
+resource "vault_jwt_auth_backend_role" "google-oidc-default" {
   backend   = vault_jwt_auth_backend.google-oidc.path
   role_type = "oidc"
   role_name = "default"
