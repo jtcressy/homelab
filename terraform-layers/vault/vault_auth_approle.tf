@@ -2,9 +2,9 @@ resource "vault_auth_backend" "approle" {
   type = "approle"
 
   tune {
-    default_lease_ttl  = "1h"
+    default_lease_ttl  = "3600"
     listing_visibility = "hidden"
-    max_lease_ttl      = "7d"
+    max_lease_ttl      = "604800"
   }
 }
 
