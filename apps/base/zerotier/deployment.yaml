@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: router
+  name: router
+  namespace: zerotier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: router
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: router
+    spec:
+      containers:
+      - image: bltavares/zerotier
+        name: zerotier
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - zerotier-cli join $ZEROTIER_NETWORK_ID
+        env:
+        - name: ZEROTIER_NETWORK_ID
+          valueFrom:
+            configMapKeyRef:
+              name: zerotier-config
+              key: zerotier-network-id
+        resources:
+          limits:
+            cpu: 50m
+            memory: 150Mi
+          requests:
+            cpu: 50m
+            memory: 150Mi
+        securityContext:
+          capabilities:
+            add:
+              - NET_ADMIN
+              - SYS_ADMIN
+        volumeMounts:
+          - mountPath: /var/lib/zerotier-one
+            name: zerotier-cache
+          - mountPath: /var/lib/zerotier-one/identity.public
+            name: zerotier-identity
+            subPath: identity.public
+          - mountPath: /var/lib/zerotier-one/identity.secret
+            name: zerotier-identity
+            subPath: identity.secret
+          - mountPath: /dev/net/tun
+            name: dev-net-tun
+      - name: shell
+        image: busybox
+        resources: {}
+        command:
+        - /bin/sh
+        - -c
+        - while true; do sleep 86400; done;
+      volumes:
+      - name: dev-net-tun
+        hostPath:
+          path: /dev/net/tun
+      - name: zerotier-identity
+        secret:
+          secretName: zerotier-identity
+      - name: zerotier-cache
+        emptyDir: {}
+status: {}

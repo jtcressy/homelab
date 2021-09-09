@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zerotier-config
+  namespace: zerotier
+data:
+  zerotier-network-id: "e4da7455b2bf226b"

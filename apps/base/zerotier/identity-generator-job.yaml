@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: zerotier-identity-generator
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: zerotier-identity-generator-edit
+subjects:
+- kind: ServiceAccount
+  name: zerotier-identity-generator
+roleRef:
+  kind: ClusterRole
+  name: edit
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: zerotier-identity-generator
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      serviceAccountName: zerotier-identity-generator
+      initContainers:
+      - name: zerotier-identity-generator
+        image: bltavares/zerotier
+        volumeMounts:
+          - name: identity-temp
+            mountPath: /zerotier-identity/
+        command:
+        - sh
+        - -c
+        - |
+          zerotier-idtool generate > /zerotier-identity/identity.secret
+          zerotier-idtool getpublic /zerotier-identity/identity.secret > /zerotier-identity/identity.public
+      containers:
+      - name: zerotier-identity-secret-writer
+        image: bitnami/kubectl
+        volumeMounts:
+          - name: identity-temp
+            mountPath: /zerotier-identity/
+        command:
+        - sh
+        - -c
+        - |
+          kubectl get secret zerotier-identity || kubectl create secret generic zerotier-identity \
+            --from-file=identity.secret=/zerotier-identity/identity.secret \
+            --from-file=identity.public=/zerotier-identity/identity.public \
+            --dry-run=client -o yaml | kubectl create -f -
+      restartPolicy: Never
+      volumes:
+        - name: identity-temp
+          emptyDir: {}
