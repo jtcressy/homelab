@@ -5,16 +5,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      network: host
       args:
         VARIANT: focal
-    
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - tailscale-socket:/var/run/tailscale
-    
+    network_mode: container:tailscale
     command: /bin/sh -c "while sleep 1000; do :; done"
-
-    network_mode: bridge
   tailscale:
     image: docker.io/jauderho/tailscale:v1.14.0
     env_file: /root/.codespaces/shared/.env
@@ -28,7 +26,6 @@ services:
     volumes:
       - /var/lib/docker/codespacemount/.persistedshare/tailscale:/tailscale
       - tailscale-socket:/var/run/tailscale
-    network_mode: container:devcontainer
     devices:
       - "/dev/net/tun:/dev/net/tun"
     cap_add:
@@ -39,3 +36,6 @@ services:
 
 volumes:
   tailscale-socket:
+
+networks:
+  devcontainer:
