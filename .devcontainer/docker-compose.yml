@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VARIANT: focal
+    
+    volumes:
+      - ../workspace:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+    
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+    network_mode: service:tailscale
+  tailscale:
+    image: docker.io/jauderho/tailscale:v1.14.0
+    environment: 
+      HOSTNAME: codespaces
+      TAILSCALE_AUTH: ${TAILSCALE_EPHEMERAL_AUTHKEY}
+    restart: unless-stopped
