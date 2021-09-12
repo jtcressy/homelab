@@ -8,5 +8,5 @@
 	"settings": {},
 	"extensions": [],
 	"remoteUser": "root",
-	"postStartCommand": "tailscale up --authkey=${TAILSCALE_EPHEMERAL_AUTHKEY} --accept-dns --accept-routes"
+	"postStartCommand": "tailscale up --authkey=${TAILSCALE_REUSABLE_AUTHKEY} --accept-dns --accept-routes"
 }

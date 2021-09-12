@@ -11,21 +11,18 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - tailscale-socket:/var/run/tailscale
-    depends_on:
-      - "tailscale"
-    networks: devcontainer
     command: /bin/sh -c "while sleep 1000; do :; done"
   tailscale:
     image: docker.io/jauderho/tailscale:v1.14.0
     env_file: /root/.codespaces/shared/.env
-    networks: devcontainer
+    depends_on:
+      - "devcontainer"
+    network_mode: "service:devcontainer"
     entrypoint:
-      - /bin/sh
-      - -c
-      - export TAILSCALE_AUTH=$TAILSCALE_EPHEMERAL_AUTHKEY && sh /entrypoint.sh
+      - /usr/local/bin/tailscaled
+      - --state=/tailscale/tailscaled.state
     environment: 
       HOSTNAME: codespaces
-      TAILSCALE_AUTH: "$TAILSCALE_EPHEMERAL_AUTHKEY"
     volumes:
       - /var/lib/docker/codespacemount/.persistedshare/tailscale:/tailscale
       - tailscale-socket:/var/run/tailscale
@@ -39,7 +36,3 @@ services:
 
 volumes:
   tailscale-socket:
-
-networks:
-  devcontainer:
-    driver: overlay
