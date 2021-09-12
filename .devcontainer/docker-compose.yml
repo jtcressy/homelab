@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 
 services:
   devcontainer:
@@ -11,11 +11,14 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - tailscale-socket:/var/run/tailscale
-    network_mode: container:tailscale
+    depends_on:
+      - "tailscale"
+    networks: devcontainer
     command: /bin/sh -c "while sleep 1000; do :; done"
   tailscale:
     image: docker.io/jauderho/tailscale:v1.14.0
     env_file: /root/.codespaces/shared/.env
+    networks: devcontainer
     entrypoint:
       - /bin/sh
       - -c
@@ -39,3 +42,4 @@ volumes:
 
 networks:
   devcontainer:
+    driver: overlay
