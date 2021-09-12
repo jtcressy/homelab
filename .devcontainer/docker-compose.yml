@@ -20,7 +20,7 @@ services:
     entrypoint:
       - /bin/sh
       - -c
-      - export TAILSCALE_AUTH=$TAILSCALE_EPHEMERAL_AUTHKEY && /entrypoint.sh
+      - export TAILSCALE_AUTH=$TAILSCALE_EPHEMERAL_AUTHKEY && sh /entrypoint.sh
     environment: 
       HOSTNAME: codespaces
       TAILSCALE_AUTH: "$TAILSCALE_EPHEMERAL_AUTHKEY"
