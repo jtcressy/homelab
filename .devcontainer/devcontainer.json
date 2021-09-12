@@ -7,5 +7,6 @@
 	"workspaceFolder": "/workspace",
 	"settings": {},
 	"extensions": [],
-	"remoteUser": "root"
+	"remoteUser": "root",
+	"postStartCommand": "tailscale up --authkey=${TAILSCALE_EPHEMERAL_AUTHKEY} --accept-dns --accept-routes"
 }

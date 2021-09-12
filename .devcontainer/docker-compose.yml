@@ -10,10 +10,11 @@ services:
     
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - tailscale-socket:/var/run/tailscale
     
     command: /bin/sh -c "while sleep 1000; do :; done"
 
-    network_mode: host
+    network_mode: bridge
   tailscale:
     image: docker.io/jauderho/tailscale:v1.14.0
     env_file: /root/.codespaces/shared/.env
@@ -26,7 +27,8 @@ services:
       TAILSCALE_AUTH: "$TAILSCALE_EPHEMERAL_AUTHKEY"
     volumes:
       - /var/lib/docker/codespacemount/.persistedshare/tailscale:/tailscale
-    network_mode: host
+      - tailscale-socket:/var/run/tailscale
+    network_mode: container:devcontainer
     devices:
       - "/dev/net/tun:/dev/net/tun"
     cap_add:
@@ -34,3 +36,6 @@ services:
       - SYS_ADMIN
       - CAP_SYS_RAWIO
     restart: unless-stopped
+
+volumes:
+  tailscale-socket:
