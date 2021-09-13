@@ -13,3 +13,20 @@ resource "vault_generic_secret" "meta-google-oidc-client" {
     ignore_changes = [data_json]
   }
 }
+
+resource "vault_mount" "generic-kv" {
+  path = "generic"
+  type = "kv-v2"
+}
+
+resource "vault_generic_secret" "tailscale" {
+  path = "${vault_mount.generic-kv.path}/tailscale"
+  data_json = jsonencode({
+    ephemeral = ""
+    reusable = ""
+    api = ""
+  })
+  lifecycle {
+    ignore_changes = [data_json]
+  }
+}
