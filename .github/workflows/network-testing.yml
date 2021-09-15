@@ -3,6 +3,9 @@ name: Network Testing
 on:
   workflow_dispatch:
 
+env:
+  VAULT_ADDR: https://vault.jtcressy.net/
+
 jobs:
   network-testing:
     runs-on: ubuntu-latest
