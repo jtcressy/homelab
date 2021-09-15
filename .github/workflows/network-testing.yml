@@ -38,12 +38,12 @@ jobs:
         ROLE="github-actions"
         SERVICE_ACCOUNT="github-actions@jtcressy-net-235001.iam.gserviceaccount.com"
         echo "::set-output name=vault_token::$(vault login \
-          -method=gcp \
+          -method=gcp -token-only \
           role="${ROLE}" \
           service_account="${SERVICE_ACCOUNT}" \
           jwt_exp="60m" \
           credentials=@"${GOOGLE_APPLICATION_CREDENTIALS}" \
-          project="${{ secrets.GCP_PROJECT_ID }}" -token-only)"
+          project="${{ secrets.GCP_PROJECT_ID }}")"
         
     - name: Vault Secrets
       uses: hashicorp/vault-action@v2.3.1
