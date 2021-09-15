@@ -41,7 +41,7 @@ jobs:
           -method=gcp -token-only \
           role="${ROLE}" \
           service_account="${SERVICE_ACCOUNT}" \
-          jwt_exp="60m" \
+          jwt_exp="5m" \
           credentials=@"${GOOGLE_APPLICATION_CREDENTIALS}" \
           project="${{ secrets.GCP_PROJECT_ID }}")"
         
