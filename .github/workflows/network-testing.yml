@@ -76,6 +76,6 @@ jobs:
         tailscale ping gw || true && \
         ping $(tailscale ip --4 gw) -c 4 || true && \
         ping6 $(tailscale ip --6 gw) -c 4 || true && \
-        curl -vk https://gw.jtcressy.net.beta.tailscale.net || true && \
-        curl -6vk https://gw.jtcressy.net.beta.tailscale.net || true
+        curl -svk -m 5 https://gw.jtcressy.net.beta.tailscale.net || true && \
+        curl -6svk -m 5 https://gw.jtcressy.net.beta.tailscale.net || true
 
