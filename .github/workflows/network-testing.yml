@@ -42,7 +42,7 @@ jobs:
           role="${ROLE}" \
           service_account="${SERVICE_ACCOUNT}" \
           jwt_exp="60m" \
-          credentials=@"${HOME}/.config/gcloud/application_default_credentials.json" \
+          credentials=@"${GOOGLE_APPLICATION_CREDENTIALS}" \
           project="${{ secrets.GCP_PROJECT_ID }}" -token-only)"
         
     - name: Vault Secrets
