@@ -54,3 +54,16 @@ spec:
     - role: roles/iam.workloadIdentityUser
       members:
         - serviceAccount:jtcressy-net-235001.svc.id.goog[vault/vault-ksa]
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicy
+metadata:
+  name: vault-gcp-auth
+  namespace: vault
+  annotations:
+    cnrm.cloud.google.com/project-id: jtcressy-net-235001
+spec:
+  bindings:
+    - role: roles/iam.serviceAccountKeyAdmin
+      members:
+        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
