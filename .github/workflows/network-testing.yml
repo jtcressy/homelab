@@ -74,8 +74,8 @@ jobs:
     - name: check connection to home gateway
       run: |
         tailscale ping gw || true && \
-        ping $(tailscale ip --4 gw) || true && \
-        ping6 $(tailscale ip --6 gw) || true && \
+        ping $(tailscale ip --4 gw) -c 4 || true && \
+        ping6 $(tailscale ip --6 gw) -c 4 || true && \
         curl -vk https://gw.jtcressy.net.beta.tailscale.net || true && \
         curl -6vk https://gw.jtcressy.net.beta.tailscale.net || true
 
