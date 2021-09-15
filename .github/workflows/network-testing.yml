@@ -1,0 +1,64 @@
+name: Network Testing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  network-testing:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Vault CLI
+      run: |
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
+        sudo apt-get -q -o=Dpkg::Use-Pty=0 update && sudo apt-get -yq -o=Dpkg::Use-Pty=0 install vault
+
+    - name: Check for Running Vault
+      run: vault status
+
+    - name: Set up gcloud Cloud SDK environment
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Generate gcp iam jwt token for Vault
+      id: vault_login
+      run: |
+        ROLE="github-actions"
+        SERVICE_ACCOUNT="github-actions@jtcressy-net-235001.iam.gserviceaccount.com"
+        echo "::set-output name=vault_token::$(vault login \
+          -method=gcp \
+          role="${ROLE}" \
+          service_account="${SERVICE_ACCOUNT}" \
+          jwt_exp="60m" \
+          credentials=@/root/.config/gcloud/application_default_credentials.json \
+          project="${{ secrets.GCP_PROJECT_ID }}" -token-only)"
+        
+    - name: Vault Secrets
+      id: secrets
+      with:
+        url: https://vault.jtcressy.net
+        token: ${{ steps.vault_login.outputs.vault_token}}
+        secrets: |
+          generic/tailscale ephemeral | TAILSCALE_AUTHKEY ;
+
+    - name: Tailscale
+      uses: tailscale/github-action@v1
+      with:
+        authkey: ${{ steps.secrets.outputs.TAILSCALE_AUTHKEY }}
+
+    - name: IPV6 Check
+      run: |
+        [ -f /proc/net/if_inet6 ] && echo 'IPv6 ready system!' || echo 'No IPv6 support found! Compile the kernel!!' && \
+        curl -6 https://ipv6.google.com && \
+        ping -6 ipv6.google.com
+
+    - name: Network Test Commands
+      run: |
+        ip route show table all && \
+        ip -6 route show table all && \
+        ip addr show dev tailscale0
