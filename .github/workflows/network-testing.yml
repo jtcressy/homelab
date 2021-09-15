@@ -62,8 +62,8 @@ jobs:
     - name: IPV6 Check
       run: |
         [ -f /proc/net/if_inet6 ] && echo 'IPv6 ready system!' || echo 'No IPv6 support found! Compile the kernel!!' && \
-        curl -6 https://ipv6.google.com && \
-        ping -6 ipv6.google.com
+        curl -6 -vvv https://ipv6.google.com || true && \
+        ping -6 ipv6.google.com -c 4
 
     - name: Network Test Commands
       run: |
