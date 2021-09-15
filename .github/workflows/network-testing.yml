@@ -39,6 +39,7 @@ jobs:
           project="${{ secrets.GCP_PROJECT_ID }}" -token-only)"
         
     - name: Vault Secrets
+      uses: hashicorp/vault-action@v2.3.1
       id: secrets
       with:
         url: https://vault.jtcressy.net
