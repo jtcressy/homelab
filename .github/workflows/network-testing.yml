@@ -52,7 +52,7 @@ jobs:
         url: https://vault.jtcressy.net
         token: ${{ steps.vault_login.outputs.vault_token}}
         secrets: |
-          generic/tailscale ephemeral | TAILSCALE_AUTHKEY ;
+          generic/data/tailscale ephemeral | TAILSCALE_AUTHKEY ;
 
     - name: Tailscale
       uses: tailscale/github-action@v1
