@@ -10,7 +10,6 @@ spec:
     apiVersion: storage.cnrm.cloud.google.com/v1beta1
     kind: StorageBucket
     name: vault-jtcressy-net
-    namespace: vault
   bindings:
     - role: roles/storage.admin
       members:
@@ -31,7 +30,6 @@ spec:
     apiVersion: kms.cnrm.cloud.google.com/v1beta1
     kind: KMSCryptoKey
     name: vault-key
-    namespace: vault
   bindings:
     - role: roles/cloudkms.cryptoKeyEncrypterDecrypter
       members:
@@ -49,21 +47,24 @@ spec:
     apiVersion: iam.cnrm.cloud.google.com/v1beta1
     kind: IAMServiceAccount
     name: vault-server
-    namespace: vault
   bindings:
     - role: roles/iam.workloadIdentityUser
       members:
         - serviceAccount:jtcressy-net-235001.svc.id.goog[vault/vault-ksa]
 ---
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
-kind: IAMPolicy
+kind: IAMPolicyMember
 metadata:
   name: vault-gcp-auth
   namespace: vault
   annotations:
     cnrm.cloud.google.com/project-id: jtcressy-net-235001
 spec:
-  bindings:
-    - role: roles/iam.serviceAccountKeyAdmin
-      members:
-        - serviceAccount:vault-server@jtcressy-net-235001.iam.gserviceaccount.com
+  memberFrom:
+    serviceAccountRef:
+      name: vault-server
+  role: roles/iam.serviceAccountKeyAdmin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/jtcressy-net-235001
