@@ -4,5 +4,6 @@ resources:
   - ../base/sources
   - ../base/gateway-api
   - ../base/traefik
+  - ../base/csi-secrets-store
 patchesStrategicMerge:
   - ./traefik/traefik-values.yaml
