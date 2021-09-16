@@ -8,6 +8,7 @@ spec:
   chart:
     spec:
       chart: vault
+      version: "v0.15.0"
       sourceRef:
         kind: HelmRepository
         name: hashicorp
@@ -21,6 +22,8 @@ spec:
       enabled: true
     server:
       enabled: true
+      image:
+        tag: "1.8.2"
       updateStrategyType: RollingUpdate
       logFormat: json
       resources:
@@ -68,7 +71,8 @@ spec:
             bucket = "vault-jtcressy-net"
             ha_enabled = "true"
           }
-
+      csi:
+        enabled: true
       extraEnvironmentVars:
         GOOGLE_REGION: global
         GOOGLE_PROJECT: jtcressy-net-235001
