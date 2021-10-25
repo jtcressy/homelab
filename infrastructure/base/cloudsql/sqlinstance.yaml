@@ -3,6 +3,7 @@ kind: SQLInstance
 metadata:
   annotations:
     cnrm.cloud.google.com/project-id: jtcressy-net-235001
+    cnrm.cloud.google.com/deletion-policy: abandon
   name: mysql-primary
   namespace: default
 spec:
