@@ -3,7 +3,7 @@ kind: SQLInstance
 metadata:
   annotations:
     cnrm.cloud.google.com/project-id: jtcressy-net-235001
-  name: mysql-primary-instance
+  name: mysql-primary
   namespace: default
 spec:
   databaseVersion: MYSQL_5_7
