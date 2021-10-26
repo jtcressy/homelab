@@ -21,6 +21,7 @@ env:
 jobs:
   terraform-cloud-layer:
     runs-on: ubuntu-latest
+    concurrency: terraform-cloud-layer
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}

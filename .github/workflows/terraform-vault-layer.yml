@@ -23,6 +23,7 @@ env:
 jobs:
   terraform-vault-layer:
     runs-on: ubuntu-latest
+    concurrency: terrform-vault-layer
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
