@@ -42,7 +42,7 @@ jobs:
       uses: 1password/load-secrets-action@v1
       env:
         OP_CONNECT_HOST: http://localhost:8080
-        OP_CONNECT_TOKEN: ${{ secrets.OP_CONNECT_TOKEN }}
+        OP_CONNECT_TOKEN: ${{ secrets.OP_ACCESS_TOKEN }}
         SECRET: op://jtcressy-net-infra/hello-world/secret
 
     - name: Check Secrets
