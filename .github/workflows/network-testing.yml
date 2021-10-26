@@ -33,16 +33,17 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Configure 1Password Connect
+      uses: 1password/load-secrets-action/configure@v1
+      with:
+        connect-host: http://localhost:8080
+        connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
     
     - name: Load Secrets
       uses: 1password/load-secrets-action@v1
       env:
-        OP_CONNECT_HOST: http://localhost:8080
-        OP_CONNECT_TOKEN: ${{ secrets.OP_ACCESS_TOKEN }}
-        SECRET: op://jtcressy-net-infra/hello-world/username
-
-    - name: Check Secrets
-      run: echo "$SECRET" | base64
+        TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
 
     - name: Setup Vault CLI
       run: |
