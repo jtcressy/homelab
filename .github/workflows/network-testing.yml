@@ -43,7 +43,7 @@ jobs:
       env:
         OP_CONNECT_HOST: http://localhost:8080
         OP_CONNECT_TOKEN: ${{ secrets.OP_ACCESS_TOKEN }}
-        SECRET: op://jtcressy-net-infra/hello-world/secret
+        SECRET: op://jtcressy-net-infra/hello-world/username
 
     - name: Check Secrets
       run: echo "$SECRET" | base64
