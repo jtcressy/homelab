@@ -13,10 +13,6 @@ env:
 jobs:
   network-testing:
     runs-on: ubuntu-latest
-    # container:
-    #   image: ubuntu:latest
-    #   volumes:
-    #     - op-data:/op-data
     services:
       op-connect-sync:
         image: 1password/connect-api:latest

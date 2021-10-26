@@ -16,7 +16,6 @@ permissions: write-all
 env:
   tf_actions_working_dir: terraform-layers/cloud/
   TF_VAR_gh_pat: ${{ secrets.GH_PAT }}
-  ZEROTIER_CENTRAL_TOKEN: ${{ secrets.ZEROTIER_CENTRAL_TOKEN }}
 
 jobs:
   terraform-cloud-layer:
@@ -25,9 +24,37 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
+    services:
+      op-connect-sync:
+        image: 1password/connect-api:latest
+        ports:
+          - 8080:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+      op-connect-api:
+        image: 1password/connect-sync:latest
+        ports:
+          - 8081:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Configure 1Password Connect
+      uses: 1password/load-secrets-action/configure@v1
+      with:
+        connect-host: http://localhost:8080
+        connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
+    
+    - name: Load Tailscale Secrets
+      uses: 1password/load-secrets-action@v1
+      env:
+        TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
 
     - name: Tailscale
       uses: tailscale/github-action@v1
@@ -51,7 +78,6 @@ jobs:
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: ${{ steps.terraform-version.outputs.content }}
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
     - name: Terraform Format
       id: fmt
