@@ -43,50 +43,12 @@ jobs:
     - name: Load Secrets
       uses: 1password/load-secrets-action@v1
       env:
-        TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
-
-    - name: Setup Vault CLI
-      run: |
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
-        sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" && \
-        sudo apt-get -q -o=Dpkg::Use-Pty=0 update && sudo apt-get -yq -o=Dpkg::Use-Pty=0 install vault
-
-    - name: Check for Running Vault
-      run: vault status
-
-    - name: Set up gcloud Cloud SDK environment
-      uses: google-github-actions/setup-gcloud@v0.2.0
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        export_default_credentials: true
-
-    - name: Generate gcp iam jwt token for Vault
-      id: vault_login
-      run: |
-        ROLE="github-actions"
-        SERVICE_ACCOUNT="github-actions@jtcressy-net-235001.iam.gserviceaccount.com"
-        echo "::set-output name=vault_token::$(vault login \
-          -method=gcp -token-only \
-          role="${ROLE}" \
-          service_account="${SERVICE_ACCOUNT}" \
-          jwt_exp="5m" \
-          credentials=@"${GOOGLE_APPLICATION_CREDENTIALS}" \
-          project="${{ secrets.GCP_PROJECT_ID }}")"
-        
-    - name: Vault Secrets
-      uses: hashicorp/vault-action@v2.3.1
-      id: secrets
-      with:
-        url: https://vault.jtcressy.net
-        token: ${{ steps.vault_login.outputs.vault_token}}
-        secrets: |
-          generic/data/tailscale reusable | TAILSCALE_AUTHKEY ;
+        TAILSCALE_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
 
     - name: Tailscale
       uses: tailscale/github-action@v1
       with:
-        authkey: ${{ steps.secrets.outputs.TAILSCALE_AUTHKEY }}
+        authkey: ${{ env.TAILSCALE_AUTHKEY }}
 
     - name: Network Info Commands
       run: |
