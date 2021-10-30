@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  labels:
+    app: bitwarden
+  name: bitwarden
+  namespace: bitwarden
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: bw.jtcressy.net
+      http:
+        paths:
+          - backend:
+              service:
+                name: bitwarden
+                port:
+                  name: http
+            path: /
+            pathType: ImplementationSpecific
+          - backend:
+              service:
+                name: bitwarden
+                port:
+                  name: websocket
+            path: /notifications/hub
+            pathType: ImplementationSpecific

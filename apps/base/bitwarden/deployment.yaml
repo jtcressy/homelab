@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: bitwarden
+  name: bitwarden
+  namespace: bitwarden
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 0
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: bitwarden
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: bitwarden
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - env:
+            - name: ROCKET_PORT
+              value: "8080"
+          envFrom:
+            - secretRef:
+                name: bitwarden
+                optional: false
+          image: bitwardenrs/server-mysql:1.14.2
+          imagePullPolicy: IfNotPresent
+          name: bitwarden
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 3012
+              name: websocket
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /data
+              mountPropagation: None
+              name: data-storage
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 2000
+        runAsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
+      shareProcessNamespace: false
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: data-storage
+          persistentVolumeClaim:
+            claimName: bitwarden-bucket
