@@ -62,6 +62,10 @@ jobs:
         curl -6 -vvv https://ipv6.google.com || true && \
         ping -6 ipv6.google.com -c 4 || true
 
+    - name: Test connection to remote subnet (192.168.20.1/24)
+      run: |
+        ping 192.168.20.1 -c 4 || true
+
     - name: check connection to home gateway
       run: |
         tailscale ping gw || true && \
