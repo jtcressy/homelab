@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: onepassword
 resources:
   - namespace.yaml
-  - crds
+  - crds/*.yaml
   - connect
   - rbac.yaml
   - operator.yaml
