@@ -9,5 +9,5 @@ resources:
   # - ../base/cloudsql
 patchesStrategicMerge:
   - ./traefik/traefik-values.yaml
-commonLabels:
-  kubernetes.io/cluster-service: "true"
+transformers:
+  - global-labels.yaml
