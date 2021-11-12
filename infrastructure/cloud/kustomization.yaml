@@ -9,5 +9,6 @@ resources:
   # - ../base/cloudsql
 patchesStrategicMerge:
   - ./traefik/traefik-values.yaml
+  - ./traefik/cf-tunnel-secret.yaml
 transformers:
   - global-labels.yaml
