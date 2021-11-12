@@ -6,3 +6,4 @@ resources:
   - release.yaml
   - cf-tunnel-secret.yaml
   - cf-tunnel-config.yaml
+  - dashboard-route.yaml
