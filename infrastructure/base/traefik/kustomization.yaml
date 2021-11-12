@@ -4,3 +4,4 @@ namespace: traefik-v2
 resources:
   - namespace.yaml
   - release.yaml
+  - cf-tunnel-secret.yaml
