@@ -26,6 +26,14 @@ spec:
     service:
       # We don't need pricey cloud-provider load balancers when cloudflare can do all the work
       type: ClusterIP
+    env:
+      - name: TRAEFIK_PILOT_DASHBOARD
+        value: "true"
+      - name: TRAEFIK_PILOT_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: traefik-pilot-token
+            key: token
     deployment:
       additionalContainers:
         - name: cloudflared

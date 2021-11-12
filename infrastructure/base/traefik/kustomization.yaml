@@ -3,7 +3,8 @@ kind: Kustomization
 namespace: traefik-v2
 resources:
   - namespace.yaml
-  - release.yaml
   - cf-tunnel-secret.yaml
   - cf-tunnel-config.yaml
+  - traefik-pilot-secret.yaml
+  - release.yaml
   - dashboard-route.yaml
