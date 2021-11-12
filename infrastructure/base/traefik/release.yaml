@@ -23,6 +23,9 @@ spec:
     ingressRoute:
       dashboard:
         enabled: true
+    service:
+      # We don't need pricey cloud-provider load balancers when cloudflare can do all the work
+      type: ClusterIP
     deployment:
       additionalContainers:
         - name: cloudflared
