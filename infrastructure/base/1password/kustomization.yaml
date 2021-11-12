@@ -3,10 +3,10 @@ kind: Kustomization
 namespace: onepassword
 resources:
   - namespace.yaml
-  - ../crds
-  - ../connect
+  - crds
+  - connect
   - rbac.yaml
   - operator.yaml
-# Manually create two secrets:
-# kubectl create secret generic op-credentials --from-file=op-session=1password-credentials.json
-# kubectl create secret generic onepassword-token --from-literal=token=<OP_CONNECT_TOKEN>
+# Manually create two secrets after applying the above:
+# kubectl -n onepassword create secret generic op-credentials --from-file=op-session=1password-credentials.json
+# kubectl -n onepassword create secret generic onepassword-token --from-literal=token=<OP_CONNECT_TOKEN>
