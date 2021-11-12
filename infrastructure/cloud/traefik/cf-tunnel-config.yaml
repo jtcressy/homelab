@@ -15,5 +15,5 @@ data:
     no-autoupdate: true
     ingress:
     - hostname: traefik-gke-primary.jtcressy.net
-      service: https://localhost:9000
+      service: http://localhost:9000
     - service: http://localhost:8000
