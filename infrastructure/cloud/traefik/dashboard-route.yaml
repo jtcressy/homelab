@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - web
     - websecure
-    - internal
+    - traefik
   routes:
     - kind: Rule
       match: Host(`traefik-gke-primary.jtcressy.net`)
