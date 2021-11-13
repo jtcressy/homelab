@@ -33,6 +33,15 @@ spec:
       type: ClusterIP
     pilot:
       enabled: true
+    affinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - {{ template "traefik.name" . }}
+        topologyKey: failure-domain.beta.kubernetes.io/zone
     deployment:
       additionalContainers:
         - name: cloudflared
