@@ -25,6 +25,7 @@ spec:
       extraAnnotations:
         traefik.ingress.kubernetes.io/preserve-host: "true"
         ingress.kubernetes.io/whitelist-x-forwarded-for: "true"
+        ingress.kubernetes.io/ssl-proxy-headers: "X-Forwarded-Proto:https"
       tls:
         source: secret
         secretName: tls-rancher-ingress
