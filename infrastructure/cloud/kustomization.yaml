@@ -2,8 +2,9 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - ../base/1password
-  - ../base/sources
+  - ../base/cert-manager
   - ../base/gateway-api
+  - ../base/sources
   - traefik
   - ../base/csi-secrets-store
   # - ../base/cloudsql
