@@ -4,4 +4,5 @@ namespace: cattle-system
 resources:
   - namespace.yaml
   - tls-rancher-ingress-secret.yaml
+  - rancher-tls-ca-secret.yaml
   - release.yaml
