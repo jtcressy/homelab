@@ -3,7 +3,6 @@ kind: Kustomization
 resources:
   - ../base/1password
   - ../base/cert-manager
-  - ../base/origin-ca-issuer
   - ../base/gateway-api
   - ../base/sources
   - traefik
