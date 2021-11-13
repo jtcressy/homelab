@@ -16,4 +16,7 @@ data:
     ingress:
     - hostname: traefik-gke-primary.jtcressy.net
       service: http://localhost:9000
-    - service: http://localhost:8000
+    - service: https://localhost:8443
+      originRequest:
+        tcpKeepAlive: 60s
+        noTLSVerify: true
