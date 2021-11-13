@@ -16,6 +16,11 @@ spec:
   install:
     remediation:
       retries: 3
+  valuesFrom:
+    - kind: Secret
+      name: traefik-pilot-token
+      valuesKey: token
+      targetPath: pilot.token
   values:
     ingressClass:
       enabled: true
@@ -26,23 +31,8 @@ spec:
     service:
       # We don't need pricey cloud-provider load balancers when cloudflare can do all the work
       type: ClusterIP
-    env:
-      - name: TRAEFIK_PILOT_DASHBOARD
-        value: "true"
-      - name: TRAEFIK_PILOT_TOKEN
-        valueFrom:
-          secretKeyRef:
-            name: traefik-pilot-token
-            key: token
-    additionalArguments:
-      - "--providers.file.filename=/config/dyn.yaml"
-    volumes:
-    - name: cf-origin-tls
-      mountPath: '/certs'
-      type: secret
-    - name: traefik-config
-      mountPath: '/config'
-      type: configMap
+    pilot:
+      enabled: true
     deployment:
       additionalContainers:
         - name: cloudflared

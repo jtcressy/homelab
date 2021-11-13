@@ -4,8 +4,3 @@ namespace: cert-manager
 resources:
   - namespace.yaml
   - release.yaml
-  - github.com/cloudflare/origin-ca-issuer/deploy/crds?ref=v0.6.0
-  - github.com/cloudflare/origin-ca-issuer/deploy/rbac?ref=v0.6.0
-  - github.com/cloudflare/origin-ca-issuer/deploy/manifests?ref=v0.6.0
-  - origin-api-key-secret.yaml
-  - origin-issuer.yaml

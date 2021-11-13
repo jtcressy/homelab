@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: cloudflare-origin-ca-issuer
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    tag: v0.6.0
+  url: https://github.com/cloudflare/origin-ca-issuer
+  ignore: |
+    deploy/charts
+    deploy/example

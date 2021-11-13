@@ -7,3 +7,5 @@ resources:
   - traefik.yaml
   - secrets-store-csi-driver.yaml
   - rancher.yaml
+  - jetstack.yaml
+  - cloudflare-origin-ca-issuer.yaml

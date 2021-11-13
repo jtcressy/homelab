@@ -6,4 +6,3 @@ patchesStrategicMerge:
   - ./release.yaml
   - ./cf-tunnel-config.yaml
   - ./dashboard-route.yaml
-  - ./traefik-pilot-secret.yaml
