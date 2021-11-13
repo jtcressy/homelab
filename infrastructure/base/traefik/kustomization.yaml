@@ -5,6 +5,8 @@ resources:
   - namespace.yaml
   - cf-tunnel-secret.yaml
   - cf-tunnel-config.yaml
+  - cf-origin-crt-secret.yaml
   - traefik-pilot-secret.yaml
+  - traefik-config.yaml
   - release.yaml
   - dashboard-route.yaml

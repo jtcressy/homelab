@@ -34,6 +34,15 @@ spec:
           secretKeyRef:
             name: traefik-pilot-token
             key: token
+    additionalArguments:
+      - "--providers.file.filename=/config/dyn.yaml"
+    volumes:
+    - name: cf-origin-tls
+      mountPath: '/certs'
+      type: secret
+    - name: traefik-config
+      mountPath: '/config'
+      type: configMap
     deployment:
       additionalContainers:
         - name: cloudflared

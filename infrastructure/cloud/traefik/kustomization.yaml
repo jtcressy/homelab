@@ -4,7 +4,6 @@ resources:
   - ../../base/traefik
 patchesStrategicMerge:
   - ./release.yaml
-  - ./cf-tunnel-secret.yaml
   - ./cf-tunnel-config.yaml
   - ./dashboard-route.yaml
   - ./traefik-pilot-secret.yaml
