@@ -40,7 +40,7 @@ spec:
           - key: app
             operator: In
             values:
-            - {{ template "traefik.name" . }}
+            - '{{ template "traefik.name" . }}'
         topologyKey: failure-domain.beta.kubernetes.io/zone
     deployment:
       additionalContainers:
