@@ -6,3 +6,4 @@ resources:
   - hashicorp.yaml
   - traefik.yaml
   - secrets-store-csi-driver.yaml
+  - rancher.yaml

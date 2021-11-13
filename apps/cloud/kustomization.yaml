@@ -3,5 +3,6 @@ kind: Kustomization
 resources:
   - ../base/vault
   - ../base/tailscale
+  - rancher
 # patchesStrategicMerge:
 #   - vault-values.yaml

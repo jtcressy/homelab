@@ -1,0 +1,24 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: rancher-latest
+spec:
+  interval: 30m
+  url: https://releases.rancher.com/server-charts/latest
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: rancher-stable
+spec:
+  interval: 30m
+  url: https://releases.rancher.com/server-charts/stable
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: rancher-alpha
+spec:
+  interval: 30m
+  url: https://releases.rancher.com/server-charts/alpha
