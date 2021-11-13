@@ -24,6 +24,7 @@ spec:
     ingress:
       extraAnnotations:
         traefik.ingress.kubernetes.io/preserve-host: "true"
+        traefik.ingress.kubernetes.io/router.tls: "true"
         ingress.kubernetes.io/whitelist-x-forwarded-for: "true"
         ingress.kubernetes.io/ssl-proxy-headers: "X-Forwarded-Proto:https"
       tls:
