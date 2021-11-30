@@ -9,5 +9,8 @@ resources:
   - ../base/csi-secrets-store
   # - ../base/cloudsql
   - ../base/cluster-api
+
+  # CAPI Cluster Definitions
+  - managed-clusters/home-k8s.yaml
 transformers:
   - global-labels.yaml
