@@ -72,7 +72,8 @@ spec:
 kind: KubeadmConfig
 apiVersion: bootstrap.cluster.x-k8s.io/v1beta1
 metadata:
-  name: my-worker1-config
+  name: home-k8s-worker1-config
+  namespace: default
 spec:
   joinConfiguration:
     nodeRegistration:
