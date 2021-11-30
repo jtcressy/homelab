@@ -1,0 +1,358 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: controller-manager
+  name: capn-system
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.0-beta.0
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    cluster.x-k8s.io/v1alpha3: v1alpha4
+    cluster.x-k8s.io/v1alpha4: v1alpha4
+    clusterctl.cluster.x-k8s.io: ""
+  name: nestedclusters.infrastructure.cluster.x-k8s.io
+spec:
+  group: infrastructure.cluster.x-k8s.io
+  names:
+    categories:
+    - capi
+    - capn
+    kind: NestedCluster
+    listKind: NestedClusterList
+    plural: nestedclusters
+    shortNames:
+    - nc
+    singular: nestedcluster
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.ready
+      name: Ready
+      type: boolean
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1alpha4
+    schema:
+      openAPIV3Schema:
+        description: NestedCluster is the Schema for the nestedclusters API.
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: NestedClusterSpec defines the desired state of NestedCluster.
+            properties:
+              controlPlaneEndpoint:
+                description: ControlPlaneEndpoint represents the endpoint used to
+                  communicate with the control plane.
+                properties:
+                  host:
+                    description: The hostname on which the API server is serving.
+                    type: string
+                  port:
+                    description: The port on which the API server is serving.
+                    format: int32
+                    type: integer
+                required:
+                - host
+                - port
+                type: object
+            type: object
+          status:
+            description: NestedClusterStatus defines the observed state of NestedCluster.
+            properties:
+              ready:
+                description: Ready is when the NestedControlPlane has a API server
+                  URL.
+                type: boolean
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-manager
+  namespace: capn-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-leader-election-role
+  namespace: capn-system
+rules:
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps
+  - leases
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
+- apiGroups:
+  - ""
+  - coordination.k8s.io
+  resources:
+  - configmaps/status
+  - leases/status
+  verbs:
+  - get
+  - update
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-system-capn-manager-role
+rules:
+- apiGroups:
+  - cluster.x-k8s.io
+  resources:
+  - clusters
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - controlplane.cluster.x-k8s.io
+  resources:
+  - nestedcontrolplanes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - nestedclusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - nestedclusters/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - infrastructure.cluster.x-k8s.io
+  resources:
+  - nestedclusters/status
+  verbs:
+  - get
+  - patch
+  - update
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-system-capn-metrics-reader
+rules:
+- nonResourceURLs:
+  - /metrics
+  verbs:
+  - get
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-system-capn-proxy-role
+rules:
+- apiGroups:
+  - authentication.k8s.io
+  resources:
+  - tokenreviews
+  verbs:
+  - create
+- apiGroups:
+  - authorization.k8s.io
+  resources:
+  - subjectaccessreviews
+  verbs:
+  - create
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-leader-election-rolebinding
+  namespace: capn-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: capn-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: capn-manager
+  namespace: capn-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-system-capn-manager-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: capn-system-capn-manager-role
+subjects:
+- kind: ServiceAccount
+  name: capn-manager
+  namespace: capn-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+  name: capn-system-capn-proxy-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: capn-system-capn-proxy-role
+subjects:
+- kind: ServiceAccount
+  name: capn-manager
+  namespace: capn-system
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: controller-manager
+  name: capn-controller-manager-metrics-service
+  namespace: capn-system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    targetPort: https
+  selector:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    control-plane: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    cluster.x-k8s.io/provider: infrastructure-nested
+    clusterctl.cluster.x-k8s.io: ""
+    control-plane: controller-manager
+  name: capn-controller-manager
+  namespace: capn-system
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/provider: infrastructure-nested
+      control-plane: controller-manager
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        cluster.x-k8s.io/provider: infrastructure-nested
+        control-plane: controller-manager
+    spec:
+      containers:
+      - args:
+        - --secure-listen-address=0.0.0.0:8443
+        - --upstream=http://127.0.0.1:8080/
+        - --logtostderr=true
+        - --v=10
+        image: gcr.io/kubebuilder/kube-rbac-proxy:v0.5.0
+        name: kube-rbac-proxy
+        ports:
+        - containerPort: 8443
+          name: https
+        resources: {}
+      - args:
+        - --metrics-bind-address=127.0.0.1:8080
+        - --leader-elect
+        command:
+        - /manager
+        image: us.gcr.io/k8s-artifacts-prod/cluster-api-nested/cluster-api-nested-controller:v0.1.0
+        imagePullPolicy: IfNotPresent
+        name: manager
+        resources:
+          limits:
+            cpu: 100m
+            memory: 30Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+      serviceAccountName: capn-manager
+      terminationGracePeriodSeconds: 10
+status: {}

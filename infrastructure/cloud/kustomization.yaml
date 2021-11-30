@@ -8,5 +8,6 @@ resources:
   - traefik
   - ../base/csi-secrets-store
   # - ../base/cloudsql
+  - ../base/cluster-api
 transformers:
   - global-labels.yaml
