@@ -68,18 +68,3 @@ metadata:
   namespace: default
 spec:
   replicas: 1
----
-apiVersion: tenancy.x-k8s.io/v1alpha1
-kind: VirtualCluster
-metadata:
-  annotations:
-    cluster.x-k8s.io/name: home-k8s
-    tenancy.x-k8s.io/secret.admin-kubeconfig: home-k8s-kubeconfig
-  name: home-k8s
-  namespace: default
-spec:
-  clusterVersionName: capi
-  opaqueMetaPrefixes:
-  - tenancy.x-k8s.io
-  transparentMetaPrefixes:
-  - k8s.net.status
