@@ -60,15 +60,14 @@ spec:
         command: ["/bin/sh"]
         args:
           - -c
-          - mkdir -p /dev/net && mknod /dev/net/tun c 10 200 && tailscaled --state=kube:${KUBE_SECRET} --socket=/tmp/tailscaled.sock
-        lifecycle:
-          postStart:
-            exec:
-              command: 
-              - /bin/sh
-              - -c
-              - sleep 5; tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=${AUTH_KEY} --hostname=${HOSTNAME} && \
-                iptables -t nat -I PREROUTING -d "$(tailscale --socket=/tmp/tailscaled.sock ip -4)" -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
+          - |
+            mkdir -p /dev/net
+            mknod /dev/net/tun c 10 200
+            tailscaled --state=kube:${KUBE_SECRET} --socket=/tmp/tailscaled.sock &
+            PID=$!
+            tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=${AUTH_KEY} --hostname=${HOSTNAME}
+            iptables -t nat -I PREROUTING -d "$(tailscale --socket=/tmp/tailscaled.sock ip -4)" -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
+            wait ${PID}
         env:
         - name: HOSTNAME
           value: "home-k8s-apiserver"
