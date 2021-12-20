@@ -3,4 +3,5 @@ kind: Kustomization
 namespace: default
 resources:
 - home-k8s.yaml
+- home-k8s-kubeadmconfig.yaml
 - home-k8s-tailscale.yaml
