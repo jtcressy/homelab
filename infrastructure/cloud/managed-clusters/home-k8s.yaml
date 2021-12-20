@@ -8,15 +8,15 @@ spec:
     host: home-k8s-apiserver
     port: 6443
   controlPlaneRef:
-    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
     kind: NestedControlPlane
     name: home-k8s-control-plane
   infrastructureRef:
-    apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
     kind: NestedCluster
     name: home-k8s
 ---
-apiVersion: infrastructure.cluster.x-k8s.io/v1beta1
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha4
 kind: NestedCluster
 metadata:
   name: home-k8s
@@ -26,26 +26,26 @@ spec:
     host: localhost
     port: 6443
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
 kind: NestedControlPlane
 metadata:
   name: home-k8s-control-plane
   namespace: default
 spec:
   apiserver:
-    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
     kind: NestedAPIServer
     name: home-k8s-nestedapiserver
   controllerManager:
-    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
     kind: NestedControllerManager
     name: home-k8s-nestedcontrollermanager
   etcd:
-    apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+    apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
     kind: NestedEtcd
     name: home-k8s-nestedetcd
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
 kind: NestedEtcd
 metadata:
   name: home-k8s-nestedetcd
@@ -53,7 +53,7 @@ metadata:
 spec:
   replicas: 1
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
 kind: NestedAPIServer
 metadata:
   name: home-k8s-nestedapiserver
@@ -61,7 +61,7 @@ metadata:
 spec:
   replicas: 1
 ---
-apiVersion: controlplane.cluster.x-k8s.io/v1beta1
+apiVersion: controlplane.cluster.x-k8s.io/v1alpha4
 kind: NestedControllerManager
 metadata:
   name: home-k8s-nestedcontrollermanager
