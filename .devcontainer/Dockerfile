@@ -47,8 +47,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
 
 COPY --from=envcli/kubectx /usr/local/bin/kubectx /usr/local/bin/kubectx
 COPY --from=envcli/kubectx /usr/local/bin/kubens /usr/local/bin/kubens
-COPY --from=ghcr.io/jauderho/tailscale /usr/local/bin/tailscale /usr/local/bin/tailscale
-COPY --from=ghcr.io/jauderho/tailscale /usr/local/bin/tailscaled /usr/local/bin/tailscaled
+COPY --from=ghcr.io/tailscale/tailscale /usr/local/bin/tailscale /usr/local/bin/tailscale
+COPY --from=ghcr.io/tailscale/tailscale /usr/local/bin/tailscaled /usr/local/bin/tailscaled
 COPY --from=quay.io/derailed/k9s /bin/k9s /usr/local/bin/k9s
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
