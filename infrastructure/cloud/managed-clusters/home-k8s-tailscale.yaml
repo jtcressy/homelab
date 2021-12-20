@@ -67,8 +67,8 @@ spec:
               command: 
               - /bin/sh
               - -c
-              - tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=${AUTH_KEY} --hostname=${HOSTNAME} && \
-                iptables -t nat -I PREROUTING -d "$(tailscale --socket=/tmp/tailscaled.sock ip -4)" -j DNAT --to-destination "$(getent hosts $DEST_IP | awk '{ print $1 }')"
+              - sleep 5; tailscale --socket=/tmp/tailscaled.sock up --accept-dns=false --authkey=${AUTH_KEY} --hostname=${HOSTNAME} && \
+                iptables -t nat -I PREROUTING -d "$(tailscale --socket=/tmp/tailscaled.sock ip -4)" -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
         env:
         - name: HOSTNAME
           value: "home-k8s-apiserver"
