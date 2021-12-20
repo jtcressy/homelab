@@ -29,43 +29,51 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: home-k8s-tailscale-proxy
-template:
-  spec:
-    serviceAccountName: tailscale
-    initContainers:
-    - name: sysctler
-      image: busybox
-      securityContext:
-        privileged: true
-      command: ["/bin/sh"]
-      args:
-        - -c
-        - sysctl -w net.ipv4.ip_forward=1
-      resources:
-        requests:
-          cpu: 1m
-          memory: 1Mi
-    containers:
-    - name: tailscale
-      imagePullPolicy: Always
-      image: ghcr.io/tailscale/tailscale:v1.18.2
-      env: 
-      # Store the state in a k8s secret
-      - name: HOSTNAME
-        value: "home-k8s-apiserver"
-      - name: KUBE_SECRET
-        value: "tailscale"
-      - name: USERSPACE
-        value: "false"
-      - name: AUTH_KEY
-        valueFrom:
-          secretKeyRef:
-            name: tailscale-auth
-            key: AUTH_KEY
-            optional: true
-      - name: DEST_IP
-        value: "home-k8s-apiserver"
-      securityContext:
-        capabilities:
-          add:
-          - NET_ADMIN
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: home-k8s-tailscale-proxy
+  template:
+    metadata:
+      labels:
+        app: home-k8s-tailscale-proxy
+    spec:
+      serviceAccountName: tailscale
+      initContainers:
+      - name: sysctler
+        image: busybox
+        securityContext:
+          privileged: true
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - sysctl -w net.ipv4.ip_forward=1
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+      containers:
+      - name: tailscale
+        imagePullPolicy: Always
+        image: ghcr.io/tailscale/tailscale:v1.18.2
+        env: 
+        # Store the state in a k8s secret
+        - name: HOSTNAME
+          value: "home-k8s-apiserver"
+        - name: KUBE_SECRET
+          value: "tailscale"
+        - name: USERSPACE
+          value: "false"
+        - name: AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              name: tailscale-auth
+              key: AUTH_KEY
+              optional: true
+        - name: DEST_IP
+          value: "home-k8s-apiserver"
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
