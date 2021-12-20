@@ -65,7 +65,6 @@ template:
             optional: true
       - name: DEST_IP
         value: "home-k8s-apiserver"
-
       securityContext:
         capabilities:
           add:

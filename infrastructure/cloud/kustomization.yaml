@@ -11,6 +11,6 @@ resources:
   - ../base/cluster-api
 
   # CAPI Cluster Definitions
-  - managed-clusters/home-k8s.yaml
+  - managed-clusters
 transformers:
   - global-labels.yaml
