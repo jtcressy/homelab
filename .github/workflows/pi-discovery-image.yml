@@ -11,7 +11,7 @@ env:
   VAULT_ADDR: https://vault.jtcressy.net/
 
 jobs:
-  network-testing:
+  configure-and-publish-image:
     runs-on: ubuntu-latest
     strategy:
       matrix:
