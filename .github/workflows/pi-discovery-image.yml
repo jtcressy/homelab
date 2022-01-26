@@ -1,0 +1,100 @@
+name: Build Raspberry Pi Discovery Image
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - 'pi-discovery/'
+
+env:
+  VAULT_ADDR: https://vault.jtcressy.net/
+
+jobs:
+  network-testing:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ubuntu-release:
+        - "focal"
+        - "impish"
+    services:
+      op-connect-sync:
+        image: 1password/connect-api:latest
+        ports:
+          - 8080:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+      op-connect-api:
+        image: 1password/connect-sync:latest
+        ports:
+          - 8081:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure 1Password Connect
+      uses: 1password/load-secrets-action/configure@v1
+      with:
+        connect-host: http://localhost:8080
+        connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
+    
+    - name: Load Secrets
+      uses: 1password/load-secrets-action@v1
+      env:
+        TAILSCALE_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
+
+    - name: Tailscale
+      uses: tailscale/github-action@v1
+      with:
+        authkey: ${{ env.TAILSCALE_AUTHKEY }}
+
+    - name: Set up gcloud Cloud SDK environment
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - run: echo "IMAGE_FILE_PATH=$(curl --silent http://cdimage.ubuntu.com/releases/streams/v1/com.ubuntu.cdimage:ubuntu.json | jq -r '.products[] | select(.image_type == "preinstalled-server" and .arch == "arm64+raspi" and .release == "${{ matrix.ubuntu-release }}"") | .versions[].items."img.xz".path')" >> $GITHUB_ENV
+    - run: echo "IMAGE_DOWNLOAD_URL="https://cdimage.ubuntu.com/$IMAGE_FILE_PATH" >> $GITHUB_ENV
+
+    - name: Download Ubuntu ${{ matrix.ubuntu-version }} Image
+      run: curl -LJO $IMAGE_DOWNLOAD_URL
+
+    - uses: actions/setup-go@v2
+      with:
+        go-version: '^1.16'
+    - run: go version
+
+    - name: Decompress Image
+      run: |
+        go get github.com/ulikunitz/xz/cmd/gxz
+        gxz -d ubuntu-*.img.xz
+        
+    - run: echo "IMAGE_FILE_NAME=$(ls ubuntu-*.img)" >> $GITHUB_ENV
+
+    - name: Customize Image
+      run: |
+        mkdir -p $GITHUB_WORKSPACE/output
+        cd hack/custom-tools/rpi-image-cloud-init/
+        go mod download
+        go run main.go -boot-configs=$GITHUB_WORKSPACE/pi-discovery/boot -image-file=$GITHUB_WORKSPACE/$IMAGE_FILE_NAME
+
+    - name: Re-Compress Image
+      run: gxz ubuntu-*.img
+
+    - run: echo "IMAGE_FILE_NAME_COMPRESSED=$(ls ubuntu-*.img.xz)" >> $GITHUB_ENV
+
+    - name: Upload to secure Google Cloud Storage bucket
+      id: 'upload-file'
+      uses: 'google-github-actions/upload-cloud-storage@v0'
+      with:
+        path: '$GITHUB_WORKSPACE/$IMAGE_FILE_NAME_COMPRESSED'
+        destination: 'jtcressy-rpi-images/$IMAGE_FILE_NAME_COMPRESSED'
