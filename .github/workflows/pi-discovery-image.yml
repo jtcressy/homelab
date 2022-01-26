@@ -58,7 +58,7 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - run: echo "IMAGE_FILE_PATH=$(curl --silent http://cdimage.ubuntu.com/releases/streams/v1/com.ubuntu.cdimage:ubuntu.json | jq -r '.products[] | select(.image_type == "preinstalled-server" and .arch == "arm64+raspi" and .release == "${{ matrix.ubuntu-release }}"") | .versions[].items."img.xz".path')" >> $GITHUB_ENV
+    - run: echo "IMAGE_FILE_PATH=$(curl --silent http://cdimage.ubuntu.com/releases/streams/v1/com.ubuntu.cdimage:ubuntu.json | jq -r '.products[] | select(.image_type == "preinstalled-server" and .arch == "arm64+raspi" and .release == "${{ matrix.ubuntu-release }}") | .versions[].items."img.xz".path')" >> $GITHUB_ENV
     - run: echo "IMAGE_DOWNLOAD_URL=https://cdimage.ubuntu.com/$IMAGE_FILE_PATH" >> $GITHUB_ENV
 
     - name: Download Ubuntu ${{ matrix.ubuntu-version }} Image
