@@ -90,7 +90,7 @@ func OpenAndCopy(fileName, bootConfigFolderLocation string, fs filesystem.FileSy
 	if err != nil {
 		return err
 	}
-	dest, err := fs.OpenFile(fileName, os.O_RDWR)
+	dest, err := fs.OpenFile("/"+fileName, os.O_RDWR)
 	if err != nil {
 		return err
 	}
