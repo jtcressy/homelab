@@ -6,6 +6,7 @@ on:
     branches: [ main ]
     paths:
     - 'pi-discovery/'
+    - '.github/workflows/pi-discovery-image.yml'
 
 env:
   VAULT_ADDR: https://vault.jtcressy.net/
