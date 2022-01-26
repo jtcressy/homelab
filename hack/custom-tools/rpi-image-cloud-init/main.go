@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/cheggaaa/pb"
-	diskfs "github.com/diskfs/go-diskfs"
+	"github.com/diskfs/go-diskfs"
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/hashicorp/go-getter"
 	"io"
@@ -13,47 +13,6 @@ import (
 	"path/filepath"
 	"sync"
 )
-
-//func CustomizeImage(w http.ResponseWriter, r *http.Request) {
-//	fileName := "ubuntu-rpi.img"
-//	fileDestination := "/tmp/" + fileName
-//	ubuntuImageUrl := "https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-preinstalled-server-arm64+raspi.img.xz"
-//	client := &getter.Client{
-//		Ctx:  context.Background(),
-//		Dst:  fileDestination,
-//		Dir:  false,
-//		Src:  ubuntuImageUrl,
-//		Mode: getter.ClientModeFile,
-//	}
-//	log.Println("Downloading ubuntu image: " + ubuntuImageUrl)
-//	if err := client.Get(); err != nil {
-//		log.Fatal(err)
-//		fmt.Fprintf(w, html.EscapeString(err.Error()))
-//		return
-//	}
-//	disk, err := diskfs.Open(fileDestination)
-//	if err != nil {
-//		log.Fatal(err)
-//		fmt.Fprintf(w, html.EscapeString(err.Error()))
-//		return
-//	}
-//	fs, err := disk.GetFilesystem(1)
-//	if err != nil {
-//		log.Fatal(err)
-//		fmt.Fprintf(w, html.EscapeString(err.Error()))
-//		return
-//	}
-//	f, err := fs.OpenFile("/user-data", os.O_RDWR)
-//	if err != nil {
-//		log.Fatal(err)
-//		fmt.Fprintf(w, html.EscapeString(err.Error()))
-//		return
-//	}
-//
-//	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", fileName))
-//	w.Header().Set("Content-Type", "application/octet-stream")
-//	io.Copy(w, f)
-//}
 
 type CommandOptions struct {
 	ImageFileLocation        string
