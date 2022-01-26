@@ -71,7 +71,7 @@ jobs:
 
     - name: Decompress Image
       run: |
-        go get github.com/ulikunitz/xz/cmd/gxz
+        go install github.com/ulikunitz/xz/cmd/gxz@v0.5.10
         gxz -d ubuntu-*.img.xz
         
     - run: echo "IMAGE_FILE_NAME=$(ls ubuntu-*.img)" >> $GITHUB_ENV
