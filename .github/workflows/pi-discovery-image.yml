@@ -69,15 +69,9 @@ jobs:
     - name: Download Ubuntu ${{ matrix.ubuntu-version }} Image
       run: curl -LJO $IMAGE_DOWNLOAD_URL
 
-    - uses: actions/setup-go@v2
-      with:
-        go-version: '^1.16'
-    - run: go version
-
     - name: Decompress Image
       run: |
-        go install github.com/ulikunitz/xz/cmd/gxz@v0.5.10
-        gxz -d ubuntu-*.img.xz
+        xz -dv ubuntu-*.img.xz
         
     - run: echo "IMAGE_FILE_NAME=$(ls ubuntu-*.img)" >> $GITHUB_ENV
     - run: echo "LOOP_DEVICE=$(sudo losetup --find --partscan --show $IMAGE_FILE_NAME)" >> $GITHUB_ENV
@@ -88,7 +82,7 @@ jobs:
         sudo cp -R $GITHUB_WORKSPACE/pi-discovery/boot/ /mnt/ubuntu-boot/
 
     - name: Re-Compress Image
-      run: gxz ubuntu-*.img
+      run: xz -vT0 ubuntu-*.img
 
     - run: echo "IMAGE_FILE_NAME_COMPRESSED=$(ls ubuntu-*.img.xz)" >> $GITHUB_ENV
 
