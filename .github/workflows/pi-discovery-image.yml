@@ -80,18 +80,12 @@ jobs:
         gxz -d ubuntu-*.img.xz
         
     - run: echo "IMAGE_FILE_NAME=$(ls ubuntu-*.img)" >> $GITHUB_ENV
-
+    - run: echo "LOOP_DEVICE=$(sudo losetup --find --partscan --show $IMAGE_FILE_NAME)" >> $GITHUB_ENV
     - name: Customize Image
       run: |
-        echo "LOOP_DEVICE=$(sudo losetup --find --partscan --show $IMAGE_FILE_NAME)" >> $GITHUB_ENV
         sudo mkdir -p /mnt/ubuntu-boot
         sudo mount -o loop "${LOOP_DEVICE}p1" /mnt/ubuntu-boot
         sudo cp -R $GITHUB_WORKSPACE/pi-discovery/boot/ /mnt/ubuntu-boot/
-      # run: |
-      #   mkdir -p $GITHUB_WORKSPACE/output
-      #   cd hack/custom-tools/rpi-image-cloud-init/
-      #   go mod download
-      #   go run main.go -boot-configs=$GITHUB_WORKSPACE/pi-discovery/boot -image-file=$GITHUB_WORKSPACE/$IMAGE_FILE_NAME
 
     - name: Re-Compress Image
       run: gxz ubuntu-*.img
