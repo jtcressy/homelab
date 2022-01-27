@@ -36,11 +36,11 @@ jobs:
           - op-data:/home/opuser/.op/data
         env:
           OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
-    container:
-      image: ubuntu:focal
-      volumes:
-        - /dev:/dev
-      options: --privileged
+    # container:
+    #   image: ubuntu:focal
+    #   volumes:
+    #     - /dev:/dev
+    #   options: --privileged
     steps:
     - name: Checkout
       uses: actions/checkout@v2
