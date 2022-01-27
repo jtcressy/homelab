@@ -83,10 +83,10 @@ jobs:
 
     - name: Customize Image
       run: |
-        kpartx -av $IMAGE_FILE_NAME
-        mkdir -p /mnt/ubuntu-boot
-        mount -o loop $(losetup --list --json | jq -r '.loopdevices[] | select(."back-file" == "${{ env.GITHUB_WORKSPACE }}/${{ env.IMAGE_FILE_NAME }}") | .name') /mnt/ubuntu-boot
-        cp -R $GITHUB_WORKSPACE/pi-discovery/boot/ /mnt/ubuntu-boot/
+        sudo kpartx -av $IMAGE_FILE_NAME
+        sudo mkdir -p /mnt/ubuntu-boot
+        sudo mount -o loop $(losetup --list --json | jq -r '.loopdevices[] | select(."back-file" == "${{ env.GITHUB_WORKSPACE }}/${{ env.IMAGE_FILE_NAME }}") | .name') /mnt/ubuntu-boot
+        sudo cp -R $GITHUB_WORKSPACE/pi-discovery/boot/ /mnt/ubuntu-boot/
       # run: |
       #   mkdir -p $GITHUB_WORKSPACE/output
       #   cd hack/custom-tools/rpi-image-cloud-init/
