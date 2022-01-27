@@ -80,6 +80,11 @@ jobs:
         sudo mkdir -p /mnt/ubuntu-boot
         sudo mount -o loop "${LOOP_DEVICE}p1" /mnt/ubuntu-boot
         sudo cp -R pi-discovery/boot/ /mnt/ubuntu-boot/
+        ls -lah /mnt/ubuntu-boot/
+        ls -lah pi-discovery/boot/
+        sync
+        sudo umount /mnt/ubuntu-boot
+        sudo losetup --detach ${LOOP_DEVICE}
 
     - name: Re-Compress Image
       run: xz -vT0 ubuntu-*.img
