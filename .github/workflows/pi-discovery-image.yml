@@ -83,9 +83,9 @@ jobs:
 
     - name: Customize Image
       run: |
-        sudo kpartx -av $IMAGE_FILE_NAME
+        echo "LOOP_DEVICE=$(sudo losetup --find --partscan --show $IMAGE_FILE_NAME)" >> $GITHUB_ENV
         sudo mkdir -p /mnt/ubuntu-boot
-        sudo mount -o loop $(losetup --list --json | jq -r '.loopdevices[] | select(."back-file" == "${{ env.GITHUB_WORKSPACE }}/${{ env.IMAGE_FILE_NAME }}") | .name') /mnt/ubuntu-boot
+        sudo mount -o loop "${LOOP_DEVICE}p1" /mnt/ubuntu-boot
         sudo cp -R $GITHUB_WORKSPACE/pi-discovery/boot/ /mnt/ubuntu-boot/
       # run: |
       #   mkdir -p $GITHUB_WORKSPACE/output
