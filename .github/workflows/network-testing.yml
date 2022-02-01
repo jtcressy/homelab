@@ -43,6 +43,7 @@ jobs:
     - name: Load Secrets
       uses: 1password/load-secrets-action@v1
       env:
+        TAILSCALE_APIKEY: op://jtcressy-net-infra/tailscale/api/credential
         TAILSCALE_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
 
     - name: Tailscale
@@ -62,15 +63,7 @@ jobs:
         curl -6 -vvv https://ipv6.google.com || true && \
         ping -6 ipv6.google.com -c 4 || true
 
-    - name: Test connection to remote subnet (192.168.20.1/24)
+    - name: show all raspberrypi devices
       run: |
-        ping 192.168.20.1 -c 4 || true
-
-    - name: check connection to home gateway
-      run: |
-        tailscale ping gw || true && \
-        ping $(tailscale ip --4 gw) -c 4 || true && \
-        ping6 $(tailscale ip --6 gw) -c 4 || true && \
-        curl -svk -m 5 https://gw.jtcressy.net.beta.tailscale.net || true && \
-        curl -6svk -m 5 https://gw.jtcressy.net.beta.tailscale.net || true
+        curl -u "${TAILSCALE_APIKEY}:" https://api.tailscale.com/api/v2/tailnet/jtcressy.net/devices | jq -r '.devices[] | select(.tags | index("tag:raspberrypi")) | .'
 
