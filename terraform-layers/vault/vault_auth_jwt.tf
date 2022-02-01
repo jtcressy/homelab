@@ -24,6 +24,7 @@ resource vault_jwt_auth_backend_role github-action {
     "job_workflow_ref" = "job_workflow_ref"
     "run_id" = "run_id"
     "run_attempt" = "run_attempt"
+    "sub" = "sub"
   }
   token_policies = ["default"]
 }
