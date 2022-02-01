@@ -58,7 +58,7 @@ jobs:
         role: github-action
         secrets: |
           generic/data/ansible/ssh id_rsa | ANSIBLE_SSH_PRIVATE_KEY ;
-          generic/data/ansible/ssh "id_rsa.pub" | ANSIBLE_SSH_PUBLIC_KEY ;
+          generic/data/ansible/ssh "id_rsa_pub" | ANSIBLE_SSH_PUBLIC_KEY ;
 
     - name: Tailscale
       uses: tailscale/github-action@v1
