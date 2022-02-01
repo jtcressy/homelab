@@ -43,7 +43,7 @@ jobs:
     - name: Load Secrets
       uses: 1password/load-secrets-action@v1
       env:
-        TAILSCALE_APIKEY: op://jtcressy-net-infra/tailscale/api/credential
+        TAILSCALE_APIKEY: op://jtcressy-net-infra/tailscale/credential
         TAILSCALE_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
 
     - name: Tailscale
