@@ -62,7 +62,7 @@ jobs:
           generic/data/ansible/ssh "id_rsa_pub" | ANSIBLE_SSH_PUBLIC_KEY ;
 
     - name: Tailscale
-      uses: tailscale/github-action@v1
+      uses: tailscale/github-action@effa99fe9dc68518c77d0e7c00879f6599714d39
       with:
         authkey: ${{ env.TAILSCALE_EPHEMERAL_AUTHKEY }}
         args: "--advertise-tags='tag:gh-actions'"

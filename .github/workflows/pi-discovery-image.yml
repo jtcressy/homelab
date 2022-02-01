@@ -53,7 +53,7 @@ jobs:
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
 
     - name: Tailscale
-      uses: tailscale/github-action@v1
+      uses: tailscale/github-action@effa99fe9dc68518c77d0e7c00879f6599714d39
       with:
         authkey: ${{ env.TAILSCALE_EPHEMERAL_AUTHKEY }}
         args: "--advertise-tags='tag:gh-actions'"
