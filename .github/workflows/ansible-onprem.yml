@@ -33,6 +33,9 @@ jobs:
           - op-data:/home/opuser/.op/data
         env:
           OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+    defaults:
+      run:
+        working-directory: onprem-bootstrap
     steps:
     - name: Checkout
       uses: actions/checkout@v2
@@ -76,6 +79,8 @@ jobs:
 
     - name: Populate Ansible Inventory
       run: |
-        curl -su "${TAILSCALE_APIKEY}:" https://api.tailscale.com/api/v2/tailnet/jtcressy.net/devices | jq '{ all: { hosts: ([.devices[] | select(.tags | index("tag:raspberrypi")) ] | map({(.name + ".beta.tailscale.net"): null}) | add) }}' > onprem-bootstrap/hosts.json
-        cd onprem-bootstrap
+        curl -su "${TAILSCALE_APIKEY}:" https://api.tailscale.com/api/v2/tailnet/jtcressy.net/devices | jq '{ all: { hosts: ([.devices[] | select(.tags | index("tag:raspberrypi")) ] | map({(.name + ".beta.tailscale.net"): null}) | add) }}' > hosts.json
         ansible --list-hosts all
+
+    - name: Ansible-Ping Hosts
+      run: ansible all -m ping -v
