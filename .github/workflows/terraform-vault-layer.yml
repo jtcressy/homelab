@@ -27,9 +27,42 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
+    services:
+      op-connect-sync:
+        image: 1password/connect-api:latest
+        ports:
+          - 8080:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+      op-connect-api:
+        image: 1password/connect-sync:latest
+        ports:
+          - 8081:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Configure 1Password Connect
+      uses: 1password/load-secrets-action/configure@v1
+      with:
+        connect-host: http://localhost:8080
+        connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
+    
+    - name: Load Tailscale Secrets
+      uses: 1password/load-secrets-action@v1
+      env:
+        TAILSCALE_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
+
+    - name: Tailscale
+      uses: tailscale/github-action@v1
+      with:
+        authkey: ${{ env.TAILSCALE_AUTHKEY }}
 
     - name: Setup Vault CLI
       run: |
@@ -39,11 +72,6 @@ jobs:
 
     - name: Check for Running Vault
       run: vault status
-
-    - name: Tailscale
-      uses: tailscale/github-action@v1
-      with:
-        authkey: ${{ secrets.TAILSCALE_EPHEMERAL_AUTHKEY }}
 
     - name: Set up gcloud Cloud SDK environment
       uses: google-github-actions/setup-gcloud@v0.2.0
