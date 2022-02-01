@@ -46,6 +46,7 @@ jobs:
     - name: Load 1Password Secrets
       uses: 1password/load-secrets-action@v1
       env:
+        TAILSCALE_APIKEY: op://jtcressy-net-infra/tailscale/credential
         TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
 
@@ -73,6 +74,8 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: quick test
+    - name: Populate Ansible Inventory
       run: |
-        echo ${ANSIBLE_SSH_PUBLIC_KEY} | grep ssh-rsa
+        curl -su "${TAILSCALE_APIKEY}:" https://api.tailscale.com/api/v2/tailnet/jtcressy.net/devices | jq '{ all: { hosts: ([.devices[] | select(.tags | index("tag:raspberrypi")) ] | map({(.name + ".beta.tailscale.net"): null}) | add) }}' > onprem-bootstrap/hosts.json
+        cd onprem-bootstrap
+        ansible --list-hosts all
