@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]
     paths:
-    - 'pi-discovery/'
+    - 'pi-discovery/**'
     - '.github/workflows/pi-discovery-image.yml'
 
 env:
