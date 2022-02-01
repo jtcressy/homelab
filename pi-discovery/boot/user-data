@@ -22,12 +22,14 @@ ssh_pwauth: false
 users:
   - name: ubuntu
     groups: [sudo]
+    shell: /usr/bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_import_id:
       - gh:jtcressy
     lock_passwd: true
   - name: ansible
     groups: [sudo]
+    shell: /usr/bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
     - "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3p1QBbc5pCFWad7aBn9XfYu9UhpL057ZaeGAuMPmaT84vHYk+ZGEbHmmaJwmz/sQ4FUIvtsKjfRMZZ2q+YwSUJXZQ1bC3TZ3RJGggvoujOKDsRGoDxMBAKwYUEBPlSRcNJRsfP60BQXyNKQYJ6VLUwv/QQ472i3CZBp8RrPvgDNmsAw3MVUt6L0b+THBSk05W1bITZEGnZADoWvurVmejjHeem5todaCX6+kGa7Mn+DO1pjGxLxVnmujcn5xbpVbdnLD+5whtofiJ3bMwUMYe/x6/FGo35k5oiaj4mwurSVw2ODSOnTFq9czb6Uq2YdFu+0sDVcUuloTJ2bpY9qj+rsPs0wXlNnuRDKHQ14OeB0oo8xkPRu1h84eDy9eoTosQNyWBWXzlEKsE/180gTZ0Ulz6pvsks89MVFEh64XWev3Wkm2ll73Rd0CGSj38/p8iO2+wAR6C2G/hAzYP9sQZnj6dSofz1m8rr9LO2QZET1BohGwNfOpmNolR1aY0m6E= ansible.jtcressy.net"
@@ -48,6 +50,9 @@ runcmd:
 - 'apt -yq update'
 - 'apt -yq install tailscale'
 - [tailscale, up, --authkey, "file:/boot/firmware/tailscale-authkey", --advertise-tags, tag:raspberrypi]
+- 'sudo ufw deny in on any'
+- 'sudo ufw allow in on tailscale0'
+- 'sudo ufw enable'
 
 output: { all: "| tee -a /boot/firmware/cloud-init-output.log" }
 
