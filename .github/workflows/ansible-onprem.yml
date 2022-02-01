@@ -1,0 +1,79 @@
+name: Ansible-Configure Onprem Servers Over Tailscale
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+    - 'pi-discovery/'
+    - '.github/workflows/pi-discovery-image.yml'
+
+env:
+  VAULT_ADDR: https://vault.jtcressy.net/
+
+jobs:
+  ansible-playbook:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    services:
+      op-connect-sync:
+        image: 1password/connect-api:latest
+        ports:
+          - 8080:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+      op-connect-api:
+        image: 1password/connect-sync:latest
+        ports:
+          - 8081:8080
+        volumes:
+          - op-data:/home/opuser/.op/data
+        env:
+          OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Configure 1Password Connect
+      uses: 1password/load-secrets-action/configure@v1
+      with:
+        connect-host: http://localhost:8080
+        connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
+    
+    - name: Load 1Password Secrets
+      uses: 1password/load-secrets-action@v1
+      env:
+        TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
+        TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
+
+    - name: Load Vault Secrets
+      id: vault
+      uses: hashicorp/vault-action@v2.3.1
+      with:
+        url: ${{ env.VAULT_ADDR }}
+        method: jwt
+        role: github-action
+        secrets: |
+          generic/ansible/ssh id_rsa | ANSIBLE_SSH_PRIVATE_KEY ;
+          generic/ansible/ssh id_rsa.pub | ANSIBLE_SSH_PUBLIC_KEY ;
+
+    - name: Tailscale
+      uses: tailscale/github-action@v1
+      with:
+        authkey: ${{ env.TAILSCALE_EPHEMERAL_AUTHKEY }}
+        args: "--advertise-tags='tag:gh-actions'"
+
+    - name: Set up gcloud Cloud SDK environment
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: quick test
+      run: |
+        echo ${ANSIBLE_SSH_PUBLIC_KEY} | grep ssh-rsa
