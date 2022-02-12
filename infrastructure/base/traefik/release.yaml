@@ -34,15 +34,15 @@ spec:
     pilot:
       enabled: true
     affinity:
-      podAffinity:
+      podAntiAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-            - key: app
-              operator: In
-              values:
-              - '{{ template "traefik.name" . }}'
-          topologyKey: failure-domain.beta.kubernetes.io/zone
+          - labelSelector:
+              matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                    - {{ template "traefik.name" . }}
+            topologyKey: failure-domain.beta.kubernetes.io/zone
     deployment:
       additionalContainers:
         - name: cloudflared
