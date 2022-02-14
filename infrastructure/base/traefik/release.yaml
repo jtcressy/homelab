@@ -13,9 +13,15 @@ spec:
         name: traefik
         namespace: flux-system
   interval: 5m
+  timeout: 2m0s
   install:
+    crds: Create
     remediation:
       retries: 6
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 10
   valuesFrom:
     - kind: Secret
       name: traefik-pilot-token
@@ -41,7 +47,7 @@ spec:
                 - key: app.kubernetes.io/name
                   operator: In
                   values:
-                    - {{ template "traefik.name" . }}
+                    - traefik
             topologyKey: failure-domain.beta.kubernetes.io/zone
     deployment:
       additionalContainers:
