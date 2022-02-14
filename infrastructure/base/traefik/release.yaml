@@ -52,7 +52,7 @@ spec:
     deployment:
       additionalContainers:
         - name: cloudflared
-          image: cloudflare/cloudflared:2021.4.0
+          image: cloudflare/cloudflared:2022.2.0
           args:
           - tunnel
           # Points cloudflared to the config file, which configures what
