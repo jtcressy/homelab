@@ -1,0 +1,10 @@
+---
+#playbook.yaml
+
+- name: DISPLAY INVENTORY VARS
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: DISPLAY HOST VAR
+      debug:
+        msg: "The mgmt IP is {{ ansible_host }} and platform is {{ ansible_network_os }}"

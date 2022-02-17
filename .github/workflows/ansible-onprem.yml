@@ -84,10 +84,8 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Populate Ansible Inventory
-      run: |
-        curl -su "${TAILSCALE_APIKEY}:" https://api.tailscale.com/api/v2/tailnet/jtcressy.net/devices | jq '{ all: { hosts: ([.devices[] | select(.tags | index("tag:raspberrypi")) ] | map({(.name + ".beta.tailscale.net"): null}) | add) }}' > hosts.json
-        ansible --list-hosts all
+    - name: Check Ansible Inventory
+      run: ansible-inventory --playbook-dir ./ --graph
 
     - name: Ansible-Ping Hosts
-      run: ansible all -m ping -v
+      run: ansible --playbook-dir ./ -m ping -v raspberrypi,unifi-udm
