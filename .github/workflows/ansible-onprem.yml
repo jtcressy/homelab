@@ -13,6 +13,7 @@ env:
 
 jobs:
   ansible-playbook:
+    concurrency: ansible-playbook
     runs-on: ubuntu-latest
     permissions:
       id-token: write
