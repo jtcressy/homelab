@@ -13,18 +13,17 @@ DOCUMENTATION = r'''
       tailnet:
         description: Name of your tailnet
         required: true
-        env: TAILSCALE_TAILNET
       tailscale_api_key:
         description: API Key from your Tailscale account
         required: true
-        env: TAILSCALE_API_KEY
 '''
 
 from ansible.plugins.inventory import BaseInventoryPlugin
 from ansible.errors import AnsibleError, AnsibleParserError
 from ansible.template import Templar
-import requests
+
 from requests.auth import HTTPBasicAuth
+from requests import get as http_get
 
 
 class InventoryModule(BaseInventoryPlugin):
@@ -45,7 +44,7 @@ class InventoryModule(BaseInventoryPlugin):
     inventory_data = {}
     URL = 'https://api.tailscale.com/api/v2/tailnet/{}/devices'.format(tailnet)
     auth = HTTPBasicAuth(api_key, "")
-    response = requests.get(url=URL, auth=auth)
+    response = http_get(url=URL, auth=auth)
     response.raise_for_status()
     jsonResponse = response.json()
     for device in jsonResponse.get('devices'):
