@@ -51,7 +51,7 @@ jobs:
     - name: Load 1Password Secrets
       uses: 1password/load-secrets-action@v1
       env:
-        TAILSCALE_APIKEY: op://jtcressy-net-infra/tailscale/credential
+        TAILSCALE_API_KEY: op://jtcressy-net-infra/tailscale/credential
         TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
 
@@ -84,6 +84,11 @@ jobs:
         project_id: ${{ secrets.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
+
+    - name: Fix Ansible Versions
+      run: |
+        pip uninstall ansible-base ansible-core
+        pip install ansible
 
     - name: Check Ansible Version
       run: ansible --version
