@@ -63,7 +63,7 @@ jobs:
       uses: tailscale/github-action@effa99fe9dc68518c77d0e7c00879f6599714d39
       with:
         authkey: ${{ env.TAILSCALE_AUTHKEY }}
-        args: "--advertise-tags=tag:gh-actions"
+        args: "--advertise-tags=tag:ghactions"
 
     - name: Setup Vault CLI
       run: |
