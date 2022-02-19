@@ -31,10 +31,12 @@
     raw: mkdir -p "{{ unifi_onboot_directory }}"
 
   - name: tailscale shell script
-    copy:
-      scp_if_ssh: true
-      dest: "/mnt/data/on-boot.d/11-tailscale.sh"
-      content: |
+    # copy:
+    #   scp_if_ssh: true
+    #   dest: "/mnt/data/on-boot.d/11-tailscale.sh"
+    #   content: |
+    raw: |-
+        cat <<EOF > /mnt/data/on-boot.d/11-tailscale.sh
         #!/bin/sh
         CONTAINER=tailscaled
         IMAGE=ghcr.io/tailscale/tailscale:v1.18.2
@@ -46,3 +48,4 @@
           mkdir -p /mnt/data/tailscale
           podman run --rm --device=/dev/net/tun --net=host --cap-add=NET_ADMIN --cap-add=SYS_ADMIN --cap-add=CAP_SYS_RAWIO -v /mnt/data/tailscale:/var/lib/tailscale --name=${CONTAINER} -d --entrypoint /bin/sh ${IMAGE} -c "tailscaled --tun eth11"
         fi
+        EOF
