@@ -36,7 +36,7 @@
     #   dest: "/mnt/data/on-boot.d/11-tailscale.sh"
     #   content: |
     raw: |-
-        cat <<EOF > /mnt/data/on-boot.d/11-tailscale.sh
+        cat <<EOF > {{ unifi_onboot_directory }}/11-tailscale.sh
         #!/bin/sh
         CONTAINER=tailscaled
         IMAGE=ghcr.io/tailscale/tailscale:v1.18.2
