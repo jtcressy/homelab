@@ -20,11 +20,11 @@
 # }
 
 resource "google_container_cluster" "primary" {
-  provider       = google-beta
-  name           = "primary"
-  location       = data.google_compute_zones.current.names[0]
-  node_locations = slice(data.google_compute_zones.current.names, 1, 3)
-
+  provider              = google-beta
+  name                  = "primary"
+  location              = data.google_compute_zones.current.names[0]
+  node_locations        = slice(data.google_compute_zones.current.names, 1, 3)
+  enable_shielded_nodes = false
   resource_labels = {
     "goog-gameservices" = ""
   }
@@ -33,9 +33,6 @@ resource "google_container_cluster" "primary" {
   initial_node_count       = 1
 
   master_auth {
-    username = ""
-    password = ""
-
     client_certificate_config {
       issue_client_certificate = false
     }
@@ -70,7 +67,7 @@ resource "google_container_cluster" "primary" {
   }
 
   workload_identity_config {
-    identity_namespace = "${data.google_project.current.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.current.project_id}.svc.id.goog"
   }
 
   release_channel {
@@ -94,7 +91,7 @@ resource "google_container_node_pool" "primary_core-system" {
     machine_type = "n2d-standard-2"
     disk_size_gb = 20
     workload_metadata_config {
-      node_metadata = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
     tags       = []
     image_type = "COS_CONTAINERD"

@@ -29,6 +29,7 @@ resource "google_project_iam_custom_role" "velero-server" {
 }
 
 resource "google_project_iam_binding" "velero-server" {
+  project = data.google_project.current.project_id
   members = [
     "serviceAccount:${google_service_account.velero.email}"
   ]
