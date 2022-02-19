@@ -84,6 +84,10 @@ class InventoryModule(BaseInventoryPlugin):
         self.tailscale_api_key = t.template(variable=self.get_option('tailscale_api_key'), disable_lookups=False)
       else:
         self.tailscale_api_key = self.get_option('tailscale_api_key')
+      if not isinstance(self.tailscale_api_key, str):
+        raise AnsibleParserError('Tailscale API key is invalid: expected a string, not {}'.format(type(self.tailscale_api_key)))
+      if not self.tailscale_api_key.startswith("tskey-"):
+        raise AnsibleParserError('Tailscale API key is invalid: must start with "tskey-"')
     except Exception as e:
       raise AnsibleParserError(
         'All correct options required: {}'.format(e))

@@ -1,0 +1,6 @@
+---
+#tailscale_inventory.yaml
+plugin: tailscale_inventory_plugin
+tailnet: jtcressy.net
+# tailscale_api_key: "{{ lookup('env', 'TAILSCALE_API_KEY') }}"
+tailscale_api_key: "{{ lookup('hashi_vault', 'secret=generic/data/tailscale:data')['api'] }}"

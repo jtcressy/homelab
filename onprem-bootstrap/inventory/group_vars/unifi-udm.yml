@@ -1,3 +1,1 @@
 ---
-ansible_user: root
-ansible_password: "{{ lookup('env', 'UNIFI_UDM_ROOT_PASSWORD') }}"

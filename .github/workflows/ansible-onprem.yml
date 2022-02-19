@@ -85,19 +85,23 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
         export_default_credentials: true
 
-    - name: Fix Ansible Versions
+    - name: Install Correct Ansible Version
       run: |
         pip uninstall ansible-base ansible-core
         pip install ansible
-
-    - name: Check Ansible Version
-      run: ansible --version
+        ansible --version
 
     - name: Python Dependencies
       run: pip3 install -r requirements.txt
 
+    - name: Ansible Galaxy Roles Dependencies
+      run: ansible-galaxy install -r requirements.yml
+
+    - name: Ansible Galaxy Collections Dependencies
+      run: ansible-galaxy collection install -r requirements.yml
+
     - name: Check Ansible Inventory
       run: ansible-inventory --playbook-dir ./ --graph -vvvv
 
-    - name: Ansible-Ping Hosts
-      run: ansible --playbook-dir ./ -m ping -v raspberrypi,unifi-udm
+    - name: Ansible Playbook
+      run: ansible-playbook playbook.yaml

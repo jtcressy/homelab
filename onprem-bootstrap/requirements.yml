@@ -1,0 +1,10 @@
+---
+#requirements.yml
+roles:
+  - name: mabunixda.ansible_udmp
+    type: galaxy
+    version: v1.1.0
+collections:
+  - name: containers.podman
+    type: galaxy
+    version: "1.9.1"

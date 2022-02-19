@@ -1,0 +1,16 @@
+all:
+  children:
+    unifiudm:
+      hosts:
+        # Place UDM instances here with an IP that is reachable before the host is connected to tailscale.
+        # Host name MUST match the eventual FQDN it will have once it joins the tailnet.
+        # FQDN Format: <hostname>.<tailnet name>.beta.tailscale.net
+        # Be sure hostname and tags are set appropriately in the tailscale up command:
+        # $ tailscale up --hostname=<hostname> --advertise-tags=tag:unifiudm
+        home-udm.jtcressy.net.beta.tailscale.net:
+          ansible_host: 192.168.20.1
+      vars:
+        ansible_connection: ssh
+        ansible_ssh_user: "{{ lookup('hashi_vault', 'secret=generic/data/unifiudm/ssh:data')['username'] }}"
+        ansible_ssh_pass: "{{ lookup('hashi_vault', 'secret=generic/data/unifiudm/ssh:data')['password'] }}"
+        ansible_scp_if_ssh: True
