@@ -75,15 +75,17 @@ jobs:
         url: ${{ env.VAULT_ADDR }}
         method: jwt
         role: github-action
+        exportEnv: false
+        exportToken: true
         secrets: |
-          generic/data/ansible/ssh id_rsa | ANSIBLE_SSH_PRIVATE_KEY ;
-          generic/data/ansible/ssh "id_rsa_pub" | ANSIBLE_SSH_PUBLIC_KEY ;
+          generic/data/ansible/ssh id_rsa;
+          generic/data/ansible/ssh id_rsa_pub;
 
     - name: Load SSH Keys into ssh-agent
       uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: |
-          ${{ env.ANSIBLE_SSH_PRIVATE_KEY }}
+          ${{ steps.vault.outputs.id_rsa }}
 
     - name: Install Correct Ansible Version
       run: |
