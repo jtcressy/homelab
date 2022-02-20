@@ -25,6 +25,7 @@ resource "google_container_cluster" "primary" {
   location              = data.google_compute_zones.current.names[0]
   node_locations        = slice(data.google_compute_zones.current.names, 1, 3)
   enable_shielded_nodes = false
+  min_master_version    = "1.21.9"
   resource_labels = {
     "goog-gameservices" = ""
   }
