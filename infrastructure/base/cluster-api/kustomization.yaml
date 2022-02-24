@@ -4,4 +4,6 @@ resources:
   - core-cluster-api.yaml
   - bootstrap-kubeadm.yaml
   - control-plane-nested.yaml
+  - control-plane-kubeadm.yaml
   - infrastructure-nested.yaml
+  - infrastructure-docker.yaml

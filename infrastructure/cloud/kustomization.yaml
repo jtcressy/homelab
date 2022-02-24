@@ -8,9 +8,6 @@ resources:
   - traefik
   - ../base/csi-secrets-store
   # - ../base/cloudsql
-  - ../base/cluster-api
-
-  # CAPI Cluster Definitions
-  - managed-clusters
+  # - ../base/cluster-api
 transformers:
   - global-labels.yaml
