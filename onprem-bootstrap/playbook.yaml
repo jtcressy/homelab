@@ -7,10 +7,11 @@
   tasks:
     - name: DISPLAY HOST VAR
       debug:
-        msg: "The mgmt IP is {{ ansible_host }} and platform is {{ ansible_network_os }}"
+        msg: "The mgmt IP is {{ ansible_host }}"
     - name: Save known hosts
       delegate_to: localhost
       raw: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
+      ignore_errors: yes
     - name: Check connection
       raw: uname -a
       register: command_output
