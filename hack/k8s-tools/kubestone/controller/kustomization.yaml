@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubestone-system
+resources:
+  - github.com/xridge/kubestone/config/default?ref=v0.5.0
+images:
+  - name: kubestone
+    newTag: v0.5.0
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: kubestone-controller-manager
+      namespace: kubestone-system
+    spec:
+      template:
+        spec:
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: blah
+  labels:
+    name: blah
+spec:
+  
+  containers:
+  - name: blah
+    image: <Image>
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: <Port>

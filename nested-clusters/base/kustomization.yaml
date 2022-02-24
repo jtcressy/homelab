@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: k3s-servers
+commonLabels:
+  app.kubernetes.io/name: k3s-server
+resources:
+- namespace.yaml
+- k3s-server-service.yaml
+- k3s-server-statefulset.yaml
+- kubeconfig-job.yaml
+- tailscale-proxy.yaml
+
+configMapGenerator:
+  - name: cluster-facts
+    namespace: k3s-servers
+    behavior: create
+    literals:
+    - CLUSTER_NAME=instancename
+    - CLUSTER_CIDR=10.42.0.0/16
+    - SERVICE_CIDR=10.43.0.0/16

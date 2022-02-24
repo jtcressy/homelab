@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: goldpinger-system
+resources:
+- namespace.yaml
+- goldpinger.yaml
+commonLabels:
+  app.kubernetes.io/name: goldpinger
+images:
+  - name: docker.io/bloomberg/goldpinger
+    newTag: v3.4.1

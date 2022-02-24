@@ -1,0 +1,232 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: k3s-server
+  labels:
+    app.kubernetes.io/component: k3s-server-server
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: k3s-server-server
+  serviceName: k3s-server-headless
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: k3s-server-server
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/component: k3s-server-server
+              topologyKey: failure-domain.beta.kubernetes.io/zone
+      automountServiceAccountToken: false
+      serviceAccountName: tailscale
+      # dnsPolicy: None
+      # dnsConfig:
+      #   nameservers:
+      #     - 10.4.0.10
+      #     - 100.100.100.100
+      #   searches:
+      #     - k3s-servers-home-udm-k8s.svc.cluster.local
+      #     - svc.cluster.local
+      #     - cluster.local
+      #     - jtcressy.net.beta.tailscale.net
+      initContainers:
+      - name: sysctler
+        image: busybox
+        securityContext:
+          privileged: true
+        command: ["/bin/sh"]
+        args:
+          - -c
+          - sysctl -w net.ipv4.ip_forward=1
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
+      containers:
+      - name: k3s-server
+        image: rancher/k3s:latest
+        resources:
+          requests:
+            cpu: 150m
+            memory: 512Mi
+          limits:
+            cpu: 1500m
+            memory: 1500Mi
+        command:
+        - /bin/sh
+        - -c
+        - >
+          if [[ "$K3S_NODE_NAME" == *"server-0"* ]]; then unset K3S_URL; export K3S_CLUSTER_INIT=1; fi &&
+          until ip addr show tailscale0; do echo 'Waiting for device "tailscale0" to exist...'; sleep 5; done &&
+          export TAILSCALE_IP=$(ip addr show tailscale0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1) &&
+          echo "Starting k3s with tailscale0 ip: $TAILSCALE_IP" &&
+          echo "K3S Node Name: $K3S_NODE_NAME" &&
+          if [[ -z $K3S_CLUSTER_INIT ]]; then export K3S_URL="https://$K3S_CLUSTER_NAME-k3s-server:6443"; echo "K3S_URL: $K3S_URL"; fi &&
+          k3s server
+          --tls-san $TAILSCALE_IP
+          --flannel-iface tailscale0
+          --advertise-address $TAILSCALE_IP
+          --disable traefik,servicelb,local-storage
+          --cluster-cidr $CLUSTER_CIDR
+          --service-cidr $SERVICE_CIDR
+          --node-label node-role.kubernetes.io/master=true,node.kubernetes.io/role=master
+          --node-taint node-role.kubernetes.io/master=true:NoSchedule
+        readinessProbe:
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - >
+                [[ "$(kubectl get node -o name)" =~ "$K3S_NODE_NAME" ]]
+        ports:
+        - containerPort: 6443
+          name: api
+        env:
+        - name: K3S_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_NAME
+              name: cluster-facts
+        - name: CLUSTER_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_CIDR
+              name: cluster-facts
+        - name: SERVICE_CIDR
+          valueFrom:
+            configMapKeyRef:
+              key: SERVICE_CIDR
+              name: cluster-facts
+        - name: K3S_NODE_SUFFIX
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: K3S_NODE_NAME
+          value: "$(K3S_CLUSTER_NAME)-$(K3S_NODE_SUFFIX)"
+        - name: K3S_KUBECONFIG_OUTPUT
+          value: /tmp/kubeconfig.yaml
+        - name: K3S_KUBECONFIG_MODE
+          value: "666"
+        - name: K3S_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: k3s-server-token
+              key: K3S_TOKEN
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+          subPath: tmp
+        - mountPath: /run
+          name: tmp
+          subPath: run
+        - mountPath: /var/run
+          name: tmp
+          subPath: var-run
+        - name: k3s-server
+          mountPath: /var/lib/rancher/k3s
+        securityContext:
+          privileged: true
+      - name: tailscale
+        image: ghcr.io/tailscale/tailscale:latest
+        command:
+        - /usr/local/bin/tailscaled
+        - --state=kube:$(KUBE_SECRET)
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  /usr/local/bin/tailscale
+                  up
+                  --accept-dns
+                  --accept-routes
+                  --authkey=${AUTH_KEY}
+                  --hostname=${HOSTNAME}
+                  --advertise-tags=tag:k8smaster
+        resources:
+          requests:
+            cpu: 150m
+            memory: 20Mi
+          limits:
+            cpu: 500m
+            memory: 50Mi
+        volumeMounts:
+        - mountPath: /tmp
+          name: tmp
+          subPath: tmp
+        - mountPath: /var/run
+          name: tmp
+          subPath: var-run
+        - mountPath: /dev/net/tun
+          name: dev-tun
+        - mountPath: /run/secrets/kubernetes.io/serviceaccount
+          name: tailscale-sa-token
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        env:
+        - name: CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_NAME
+              name: cluster-facts
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: HOSTNAME
+          value: "$(CLUSTER_NAME)-$(POD_NAME)"
+        - name: K3S_URL
+          value: "$(CLUSTER_NAME)-k3s-server"
+        - name: KUBE_SECRET
+          value: "tailscale-state-$(POD_NAME)"
+        - name: AUTH_KEY
+          valueFrom:
+            secretKeyRef:
+              key: AUTH_KEY
+              name: tailscale-auth
+              optional: true
+      volumes:
+      - name: tmp
+        emptyDir:
+          medium: Memory
+          sizeLimit: 64Mi
+      - name: dev-tun
+        hostPath:
+          path: /dev/net/tun
+          type: CharDevice
+      - name: tailscale-sa-token
+        projected:
+          defaultMode: 420
+          sources:
+          - serviceAccountToken:
+              expirationSeconds: 3607
+              path: token
+          - configMap:
+              items:
+                - key: ca.crt
+                  path: ca.crt
+              name: kube-root-ca.crt
+          - downwardAPI:
+              items:
+                - fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+                  path: namespace
+  volumeClaimTemplates:
+  - metadata:
+      name: k3s-server
+    spec:
+      storageClassName: standard-rwo
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 5Gi

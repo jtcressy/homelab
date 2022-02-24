@@ -1,0 +1,47 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: k3s-servers-home-udm-k8s
+commonLabels:
+  app.kubernetes.io/instance: home-udm-k8s
+transformers:
+- global-labels.yaml
+resources:
+- ../../base
+- onepass-k3s-token.yaml
+# - apiserver-ingress.yaml
+images:
+- name: rancher/k3s
+  newTag: v1.21.9-k3s1
+- name: ghcr.io/tailscale/tailscale
+  newTag: v1.20.4
+replicas:
+- name: k3s-server
+  count: 3
+- name: tailscale-proxy
+  count: 1
+configMapGenerator:
+- name: cluster-facts
+  namespace: k3s-servers
+  behavior: merge
+  literals:
+  - CLUSTER_NAME=home-udm-k8s
+patchesStrategicMerge:
+- |-
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: tailscale-proxy
+    annotations:
+      operator.1password.io/item-path: "vaults/jtcressy-net-infra/items/k3s-server-home-udm-k8s-tailscale-key"
+      operator.1password.io/item-name: "tailscale-auth"
+  spec:
+    template:
+      spec:
+        containers:
+        - name: tailscale
+          env:
+          - name: AUTH_KEY
+            valueFrom:
+              secretKeyRef:
+                optional: false
+  

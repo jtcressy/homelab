@@ -9,6 +9,7 @@ import (
 	"github.com/diskfs/go-diskfs/filesystem"
 	"github.com/hashicorp/go-getter"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -25,13 +26,6 @@ var (
 	defaultUbuntuImageUrl           = "https://cdimage.ubuntu.com/releases/20.04/release/ubuntu-20.04.3-preinstalled-server-arm64+raspi.img.xz"
 	defaultImageFileLocation        = "/tmp/ubuntu-pi.img"
 	defaultBootConfigFolderLocation = "./boot/"
-	defaultBootFileList             = []string{
-		"cmdline.txt",
-		"meta-data",
-		"network-config",
-		"user-data",
-		"usercfg.txt",
-	}
 )
 
 func main() {
@@ -78,8 +72,31 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	for _, fileName := range defaultBootFileList {
-		if err := OpenAndCopy(fileName, cmdOptions.BootConfigFolderLocation, fs); err != nil {
+
+	if fileInfo, err := fs.ReadDir("/"); err != nil {
+		panic(err)
+	} else {
+		for _, file := range fileInfo {
+			fmt.Println(file.Name())
+		}
+	}
+
+	if dir, err := fs.ReadDir("/"); err != nil {
+		panic(err)
+	} else {
+		for _, file := range dir {
+			if _, err := fs.OpenFile(file.Name(), os.O_RDONLY); err != nil {
+				panic(fmt.Errorf("this dumb ass shit: %s, %s", file.Name(), err))
+			}
+		}
+	}
+
+	bootDir, err := ioutil.ReadDir(cmdOptions.BootConfigFolderLocation)
+	if err != nil {
+		panic(err)
+	}
+	for _, file := range bootDir {
+		if err := OpenAndCopy(file.Name(), cmdOptions.BootConfigFolderLocation, fs); err != nil {
 			panic(err)
 		}
 	}
@@ -88,14 +105,14 @@ func main() {
 func OpenAndCopy(fileName, bootConfigFolderLocation string, fs filesystem.FileSystem) error {
 	src, err := os.OpenFile(filepath.Join(bootConfigFolderLocation, fileName), os.O_RDONLY, 0777)
 	if err != nil {
-		return err
+		return fmt.Errorf("failure opening real file: %s, %s", fileName, err)
 	}
-	dest, err := fs.OpenFile("/"+fileName, os.O_RDWR)
+
+	dest, err := fs.OpenFile(filepath.Join("/", fileName), os.O_RDWR)
 	if err != nil {
-		return err
+		return fmt.Errorf("failure opening file from image: %s, %s", fileName, err)
 	}
-	written, err := io.Copy(dest, src)
-	if err != nil {
+	if written, err := io.Copy(dest, src); err != nil {
 		return fmt.Errorf("copy interrupted for %s at %d, %s", fileName, written, err)
 	}
 	return nil
