@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="UnattendedHostPersistenceState">
+    <option name="openedFilesInfos">
+      <list>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="61" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/hack/custom-tools/rpi-image-cloud-init/go.mod" />
+        </OpenedFileInfo>
+        <OpenedFileInfo>
+          <option name="caretOffset" value="155" />
+          <option name="fileUrl" value="file://$PROJECT_DIR$/hack/custom-tools/rpi-image-cloud-init/main.go" />
+        </OpenedFileInfo>
+      </list>
+    </option>
+  </component>
+</project>
