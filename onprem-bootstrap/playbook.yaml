@@ -22,3 +22,5 @@
 - name: SETUP UDM PRO
   import_playbook: playbooks/udmp.yml
   
+- name: SETUP RASPBERRY PI NODES
+  import_playbook: playbooks/raspberrypi.yml

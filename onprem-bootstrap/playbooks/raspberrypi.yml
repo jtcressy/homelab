@@ -1,0 +1,11 @@
+---
+- name: Adopt Raspberry Pi Devices
+  hosts: raspberrypi
+  vars:
+  tasks:
+  - name: Regenerate Hostname - ubuntu-baesd nodes
+    # preinstalled ubuntu image uses hostname "ubuntu" by default and needs to be more uniquely identifiable
+    when: "'ubuntu' in inventory_hostname"
+    # on subsequent runs, the host will not match the above 'when' rule and this effectively runs once per host
+    ansible.builtin.hostname:
+      name: "raspberrypi-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
