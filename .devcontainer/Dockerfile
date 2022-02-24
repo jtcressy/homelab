@@ -55,6 +55,13 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends musl fzf htop jq golang-go gnupg software-properties-common curl \
     && curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - \
     && sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
-    && sudo apt-get update && sudo apt-get install -y terraform vault consul inetutils-ping dnsutils
+    && sudo apt-get update && sudo apt-get install -y terraform vault consul inetutils-ping dnsutils python3-pip
+
+RUN pip3 install ansible ansible-core
 
 RUN curl -s https://fluxcd.io/install.sh | bash
+
+# Install Loft CLI
+RUN curl -s -L "https://github.com/loft-sh/loft/releases/latest" | sed -nE 's!.*"([^"]*loft-linux-amd64)".*!https://github.com\1!p' | xargs -n 1 curl -L -o loft \
+    && chmod +x loft \
+    && sudo mv loft /usr/local/bin
