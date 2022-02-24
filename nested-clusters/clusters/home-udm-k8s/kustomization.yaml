@@ -1,3 +1,11 @@
+# Example command to install and configure k3s to join the below cluster over tailscale
+# The K3S_URL should match the hostname of the tailscale proxy deployment
+#   which is determined by the format https://$(CLUSTER_NAME)-k3s-server:6443
+# Optionally, you may append your tailnet FQDN to ensure dns discovery in case search domains are improperly configured.
+##
+## curl -sfL http://get.k3s.io | K3S_URL=https://home-udm-k8s-k3s-server:6443 K3S_TOKEN="[REDACTED]" sh -s - --flannel-iface tailscale0
+##
+---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: k3s-servers-home-udm-k8s
