@@ -4,7 +4,7 @@
   hosts: unifiudm
   vars:
     udm_onboot_version: 1.0.5
-    udm_onboot_download_uri: "https://github.com/boostchicken/udm-utilities/releases/download/{{ udm_onboot_version }}/udm-boot_{{ udm_onboot_version }}_all.deb"
+    udm_onboot_download_uri: "https://github.com/boostchicken/udm-utilities/releases/download/1.0.5-fix/udm-boot_{{ udm_onboot_version }}_all.deb"
 
     unifi_mount_path: "/mnt/data"
     unifi_os_mount_path: "/data"
