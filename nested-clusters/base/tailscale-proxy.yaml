@@ -73,6 +73,20 @@ spec:
             tailscale up --accept-dns --authkey=${AUTH_KEY} --hostname=${HOSTNAME}
             iptables -t nat -I PREROUTING -d "$(tailscale ip -4)" -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
             wait ${PID}
+        readinessProbe:
+          initialDelaySeconds: 5
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - tailscale status
+        livenessProbe:
+          initialDelaySeconds: 15
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - tailscale status
         resources:
           requests:
             cpu: 150m
