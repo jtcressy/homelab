@@ -18,6 +18,7 @@
   - name: onboot - query package version
     register: onboot_version
     raw: "{{ unifi_os_cmd }} dpkg-query --showformat='${Version}' --show udm-boot"
+    ignore_errors: true
 
   - name: onboot - installation
     when: onboot_version is not defined or ( onboot_version.stdout is defined and onboot_version.stdout != udm_onboot_version )
