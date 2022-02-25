@@ -55,3 +55,8 @@
 
   - name: onboot - ensure executable flag for all scripts
     raw: chmod +x {{ unifi_onboot_directory }}/*.sh
+
+  - name: onboot - run scripts unless already connected via tailscale
+    # tailscale inventory plugin sets ansible_network_os and is otherwise undefined
+    when: ansible_network_os is not defined
+    raw: for script in $(ls {{ unifi_onboot_directory }}/*.sh); do sh $script; done;
