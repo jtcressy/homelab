@@ -43,9 +43,7 @@
     - { file: "files/udmp/onboot/11-onboot-tailscale.sh", enabled: yes }
     raw: |-
       [ '{{ item.enabled }}' = 'True' ] && \
-      cat <<EOF > {{ unifi_onboot_directory }}/{{ item.file.split("/")[-1] }}
-      {{ lookup('file', item.file) }}
-      EOF
+      echo "{{ lookup('file', playbook_dir+'/'+item.file) | b64encode }}" | openssl enc -base64 -d > {{ unifi_onboot_directory }}{{ item.file.split("/")[-1] }}
   
   - name: onboot - setup podman cni configs
     with_items:
@@ -53,9 +51,7 @@
     raw: |-
       [ '{{ item.enabled }}' = 'True' ] && \
       mkdir -p "{{ unifi_mount_path }}/podman/cni/" && \
-      cat <<EOF > {{ unifi_mount_path }}/podman/cni/{{ item.file.split("/")[-1] }}
-      {{ lookup('file', item.file) }}
-      EOF
+      echo "{{ lookup('file', item.file) | b64encode }}" | openssl enc -base64 -d > {{ unifi_mount_path }}/podman/cni/{{ item.file.split("/")[-1] }}
 
   - name: onboot - ensure executable flag for all scripts
     raw: chmod +x {{ unifi_onboot_directory }}/*.sh

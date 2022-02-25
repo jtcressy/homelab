@@ -10,7 +10,7 @@ all:
         home-udm.jtcressy.net.beta.tailscale.net:
           ansible_host: 192.168.20.1
       vars:
-        ansible_connection: ssh
+        ansible_connection: paramiko
         ansible_ssh_user: "{{ lookup('hashi_vault', 'secret=generic/data/unifiudm/ssh:username') }}"
         ansible_ssh_pass: "{{ lookup('hashi_vault', 'secret=generic/data/unifiudm/ssh:password') }}"
         ansible_scp_if_ssh: True
