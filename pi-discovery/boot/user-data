@@ -49,7 +49,26 @@ runcmd:
 - 'date'
 - 'apt -yq update'
 - 'apt -yq install tailscale'
+- 
+  - python3
+  - -c
+  - |
+    import os
+    try:
+      f = open('/proc/cpuinfo', 'r')
+      for line in f:
+        if line[0:6]=='Serial':
+          cpuserial = line.split(':')[-1].strip()[-8:-1]
+          break
+      f.close()
+    except:
+      cpuserial = "ERROR000000000"
+    os.system(f"sudo hostnamectl set-hostname raspberrypi-{cpuserial}")
 - [tailscale, up, --authkey, "file:/boot/firmware/tailscale-authkey", --advertise-tags, tag:raspberrypi]
+- |-
+  [ -f /boot/firmware/k3s_url ] && \
+  [ -f /boot/firmware/k3s_token ] && \
+  curl -sfL http://get.k3s.io | K3S_URL=$(cat /boot/firmware/k3s_url) K3S_TOKEN=$(cat /boot/firmware/k3s_token) sh -s - --flannel-iface tailscale0
 - 'sudo ufw deny in on any'
 - 'sudo ufw allow in on tailscale0'
 - 'sudo ufw enable'
