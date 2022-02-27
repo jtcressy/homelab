@@ -83,6 +83,14 @@ spec:
               - -c
               - >
                 [[ "$(kubectl get node $K3S_NODE_NAME | grep Ready)" =~ "$K3S_NODE_NAME" ]]
+        livenessProbe:
+          initialDelaySeconds: 30
+          exec:
+            command:
+              - /bin/sh
+              - -c
+              - >
+                [[ "$(kubectl get node $K3S_NODE_NAME | grep Ready)" =~ "$K3S_NODE_NAME" ]]
         ports:
         - containerPort: 6443
           name: api
