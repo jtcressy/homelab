@@ -3,9 +3,9 @@ CONTAINER=tailscaled
 IMAGE=ghcr.io/tailscale/tailscale:v1.20.4
 # Starts a Tailscale container that is deleted after it is stopped.
 # All configs stored in /mnt/data/tailscale
-if podman container exists ${CONTAINER} && [ "$(podman inspect ${CONTAINER} | jq -r '.[].ImageName')" != "$IMAGE"]; then
+if podman container exists ${CONTAINER} && [ "$(podman inspect ${CONTAINER} | jq -r '.[].ImageName')" != "$IMAGE" ]; then
   podman stop ${CONTAINER}
-  podman rm ${CONTAINER}
+  podman rm -f ${CONTAINER}
 fi
 if podman container exists ${CONTAINER}; then
   podman start ${CONTAINER}
