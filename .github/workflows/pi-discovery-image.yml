@@ -51,7 +51,7 @@ jobs:
       env:
         TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
-        K3S_TOKEN: op://jtcressy-net-infra/k3s-server-home-udm-k8s-token
+        K3S_TOKEN: op://jtcressy-net-infra/k3s-server-home-udm-k8s-token/"K3S_TOKEN"
 
     - name: Tailscale
       uses: tailscale/github-action@effa99fe9dc68518c77d0e7c00879f6599714d39
