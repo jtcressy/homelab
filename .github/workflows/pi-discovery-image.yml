@@ -51,7 +51,6 @@ jobs:
       env:
         TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
-        K3S_TOKEN: op://jtcressy-net-infra/k3s-server-home-udm-k8s-token/K3S_TOKEN
 
     - name: Tailscale
       uses: tailscale/github-action@effa99fe9dc68518c77d0e7c00879f6599714d39
@@ -93,7 +92,7 @@ jobs:
         sudo cp --no-preserve=mode,ownership -R pi-discovery/boot/* /mnt/ubuntu-boot/
         echo ${TAILSCALE_REUSABLE_AUTHKEY} > tailscale-authkey
         sudo mv tailscale-authkey /mnt/ubuntu-boot/tailscale-authkey
-        echo "$K3S_TOKEN" > k3s_token
+        op get item --vault jtcressy-net-infra k3s-server-home-udm-k8s-token --fields K3S_TOKEN > k3s_token
         sudo mv k3s_token /mnt/ubuntu-boot/k3s_token
         echo "https://home-udm-k8s-k3s-server:6443" > k3s_url
         sudo mv k3s_url /mnt/ubuntu-boot/k3s_url
