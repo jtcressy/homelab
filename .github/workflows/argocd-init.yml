@@ -32,9 +32,6 @@ jobs:
           - op-data:/home/opuser/.op/data
         env:
           OP_SESSION: ${{ secrets.OP_CREDENTIALS_B64 }}
-    defaults:
-      run:
-        working-directory: argocd/install
     steps:
     - name: Checkout
       uses: actions/checkout@v2
