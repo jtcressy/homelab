@@ -10,7 +10,7 @@ spec:
 apiVersion: onepassword.com/v1
 kind: OnePasswordItem
 metadata:
-  name: k3s-server-token
+  name: k3s-agent-token
   annotations:
     operator.1password.io/auto-restart: "true"
 spec:
