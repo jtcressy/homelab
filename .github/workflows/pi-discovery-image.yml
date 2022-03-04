@@ -47,7 +47,7 @@ jobs:
         connect-token: ${{ secrets.OP_ACCESS_TOKEN }}
     
     - name: Load Secrets
-      uses: 1password/load-secrets-action@v1
+      uses: 1password/load-secrets-action@v1.0.1
       env:
         TAILSCALE_EPHEMERAL_AUTHKEY: op://jtcressy-net-infra/tailscale/ephemeral/credential
         TAILSCALE_REUSABLE_AUTHKEY: op://jtcressy-net-infra/tailscale/reusable/credential
