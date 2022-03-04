@@ -7,7 +7,7 @@ configMapGenerator:
 kind: Kustomization
 namespace: argocd
 resources:
-- github.com/argoproj/argo-cd/v2.1.1/manifests/ha/install.yaml
+- github.com/argoproj/argo-cd/manifests/ha/cluster-install?ref=v2.2.5
 patches:
   # reset the crbs to `subject.namespace: default`, so that argo-cd will later change them to the actual ns
   - target:
