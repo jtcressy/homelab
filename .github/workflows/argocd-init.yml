@@ -81,6 +81,7 @@ jobs:
     - name: Bootstrap ArgoCD
       if: env.namespace_exists == 'false'
       run: |
+        kubectl create ns argocd
         kubectl apply -k argocd/bootstrap/argo-cd
         kubectl apply -f argocd/bootstrap/argo-cd.yaml
         kubectl apply -f argocd/bootstrap/cluster-resources.yaml
