@@ -1,0 +1,26 @@
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: k3s-server-token
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  itemPath: vaults/jtcressy-net-infra/items/k3s-cluster-edge/server
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: k3s-server-token
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  itemPath: vaults/jtcressy-net-infra/items/k3s-cluster-edge/agent
+---
+apiVersion: onepassword.com/v1
+kind: OnePasswordItem
+metadata:
+  name: tailscale-authkey
+  annotations:
+    operator.1password.io/auto-restart: "true"
+spec:
+  itemPath: vaults/jtcressy-net-infra/items/k3s-cluster-edge/tailscale

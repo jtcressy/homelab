@@ -3,14 +3,14 @@
 #   which is determined by the format https://$(CLUSTER_NAME)-k3s-server:6443
 # Optionally, you may append your tailnet FQDN to ensure dns discovery in case search domains are improperly configured.
 ##
-## curl -sfL http://get.k3s.io | K3S_URL=https://home-udm-k8s-k3s-server:6443 K3S_TOKEN="[REDACTED]" sh -s - --flannel-iface tailscale0
+## curl -sfL http://get.k3s.io | K3S_URL=https://edge-k3s-server:6443 K3S_TOKEN="[REDACTED]" sh -s - --flannel-iface tailscale0
 ##
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: k3s-servers-home-udm-k8s
+namespace: k3s-cluster-edge
 commonLabels:
-  app.kubernetes.io/instance: home-udm-k8s
+  app.kubernetes.io/instance: edge
 transformers:
 - global-labels.yaml
 resources:
@@ -32,16 +32,13 @@ configMapGenerator:
   namespace: k3s-cluster
   behavior: merge
   literals:
-  - CLUSTER_NAME=home-udm-k8s
+  - CLUSTER_NAME=edge
 patchesStrategicMerge:
 - |-
   apiVersion: apps/v1
   kind: Deployment
   metadata:
     name: tailscale-proxy
-    annotations:
-      operator.1password.io/item-path: "vaults/jtcressy-net-infra/items/k3s-server-home-udm-k8s-tailscale-key"
-      operator.1password.io/item-name: "tailscale-auth"
   spec:
     template:
       spec:
@@ -51,5 +48,7 @@ patchesStrategicMerge:
           - name: AUTH_KEY
             valueFrom:
               secretKeyRef:
+                name: tailscale-authkey
+                key: token
                 optional: false
   
