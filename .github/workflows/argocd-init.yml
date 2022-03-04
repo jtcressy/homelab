@@ -88,4 +88,6 @@ jobs:
     - name: Bootstrap ArgoCD
       if: env.namespace_exists == 'false'
       run: |
+        git config --global user.name "ArgoCD Bootstrap"
+        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
         argocd-autopilot repo bootstrap --hide-password --repo https://github.com/jtcressy/homelab/argocd/install -t ${{ secrets.GITHUB_TOKEN }}
