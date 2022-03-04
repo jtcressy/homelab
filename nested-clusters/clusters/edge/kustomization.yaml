@@ -51,4 +51,22 @@ patchesStrategicMerge:
                 name: tailscale-authkey
                 key: token
                 optional: false
+- |-
+  apiVersion: apps/v1
+  kind: StatefulSet
+  metadata:
+    name: k3s-server
+    namespace: k3s-cluster
+  spec:
+    template:
+      spec:
+        containers:
+        - name: tailscale
+          env:
+          - name: AUTH_KEY
+            valueFrom:
+              secretKeyRef:
+                name: tailscale-authkey
+                key: token
+                optional: false
   
