@@ -123,14 +123,13 @@ spec:
         - name: K3S_AGENT_TOKEN
           valueFrom:
             secretKeyRef:
-              name: k3s-agent-token
-              key: token
-              optional: true
+              name: k3s-cluster-secrets
+              key: agent-token
         - name: K3S_TOKEN
           valueFrom:
             secretKeyRef:
-              name: k3s-server-token
-              key: token
+              name: k3s-cluster-secrets
+              key: server-token
         volumeMounts:
         - mountPath: /tmp
           name: tmp
@@ -219,9 +218,8 @@ spec:
         - name: AUTH_KEY
           valueFrom:
             secretKeyRef:
-              key: AUTH_KEY
-              name: tailscale-auth
-              optional: true
+              key: tailscale-token
+              name: k3s-cluster-secrets
       volumes:
       - name: tmp
         emptyDir:

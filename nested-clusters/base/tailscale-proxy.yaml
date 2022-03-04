@@ -107,9 +107,8 @@ spec:
         - name: AUTH_KEY
           valueFrom:
             secretKeyRef:
-              name: tailscale-auth
-              key: AUTH_KEY
-              optional: true
+              name: k3s-cluster-secrets
+              key: tailscale-token
         - name: DEST_IP
           value: "k3s-server"
         securityContext:
