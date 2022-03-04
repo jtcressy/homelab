@@ -93,7 +93,7 @@ jobs:
           ssh-keygen -b 2048 -t rsa -f /tmp/ssh-deploy-key -q -N ""
           echo " ${{ secrets.GH_PAT }}" | gh auth login -h github.com --with-token
           gh repo deploy-key add --title argocd-primary /tmp/ssh-deploy-key.pub
-          argocd --core admin repo generate-spec "git@github.com:jtcressy/homelab.git" --ssh-private-key-path /tmp/ssh-deploy-key
+          argocd --core admin repo generate-spec "git@github.com:jtcressy/homelab.git" --name homelab --ssh-private-key-path /tmp/ssh-deploy-key | kubectl create -f -
         fi
         ssh-keyscan github.com | argocd --core cert add-ssh --batch
 
