@@ -91,6 +91,14 @@ spec:
               - -c
               - >
                 [[ "$(kubectl get node $K3S_NODE_NAME | grep Ready)" =~ "$K3S_NODE_NAME" ]]
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - >
+                  kubectl drain $K3S_NODE_NAME --delete-local-data=true --ignore-daemonsets=true
         ports:
         - containerPort: 6443
           name: api
@@ -218,8 +226,8 @@ spec:
         - name: AUTH_KEY
           valueFrom:
             secretKeyRef:
-              key: tailscale-token
               name: k3s-cluster-secrets
+              key: tailscale-token
       volumes:
       - name: tmp
         emptyDir:
