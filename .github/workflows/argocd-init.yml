@@ -70,15 +70,6 @@ jobs:
         cluster_name: primary
         location: us-central1-a
 
-    - name: Install ArgoCD Autopilot and ArgoCD CLI
-      run: |
-        curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-        chmod +x /usr/local/bin/argocd
-        VERSION=$(curl --silent "https://api.github.com/repos/argoproj-labs/argocd-autopilot/releases/latest" | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
-        curl -L --output - https://github.com/argoproj-labs/argocd-autopilot/releases/download/$VERSION/argocd-autopilot-linux-amd64.tar.gz | tar zx
-        mv ./argocd-autopilot-* /usr/local/bin/argocd-autopilot
-        argocd-autopilot version
-
     - name: Check for ArgoCD Namespace
       run: |
         if kubectl get ns argocd; then
@@ -90,6 +81,17 @@ jobs:
     - name: Bootstrap ArgoCD
       if: env.namespace_exists == 'false'
       run: |
-        git config --global user.name "ArgoCD Bootstrap"
-        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-        argocd-autopilot repo bootstrap --hide-password --repo https://github.com/jtcressy/homelab/argocd -t ${{ secrets.GITHUB_TOKEN }}
+        kubectl apply -k argocd/bootstrap/argo-cd
+        kubectl apply -f argocd/bootstrap/argo-cd.yaml
+        kubectl apply -f argocd/bootstrap/cluster-resources.yaml
+        kubectl apply -f argocd/bootstrap/root.yaml
+        kubectl config set-context --current --namespace=argocd
+        kubectl wait --for=condition=available --timeout=60s -n argocd deployments --all
+        if ! argocd --core repo get "git@github.com:jtcressy/homelab.git"; then
+          ssh-keygen -b 2048 -t rsa -f /tmp/ssh-deploy-key -q -N ""
+          gh repo deploy-key add --title argocd-primary /tmp/ssh-deploy-key.pub
+          argocd --core admin repo generate-spec "git@github.com:jtcressy/homelab.git" --ssh-private-key-path /tmp/ssh-deploy-key
+        fi
+        ssh-keyscan github.com | argocd --core cert add-ssh --batch
+
+          

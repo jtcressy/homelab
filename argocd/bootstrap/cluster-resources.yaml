@@ -11,7 +11,7 @@ spec:
   - git:
       files:
       - path: argocd/bootstrap/cluster-resources/*.json
-      repoURL: https://github.com/jtcressy/homelab.git
+      repoURL: git@github.com:jtcressy/homelab.git
       requeueAfterSeconds: 20
       revision: ""
       template:
@@ -41,7 +41,7 @@ spec:
       project: default
       source:
         path: argocd/bootstrap/cluster-resources/{{name}}
-        repoURL: https://github.com/jtcressy/homelab.git
+        repoURL: git@github.com:jtcressy/homelab.git
       syncPolicy:
         automated:
           allowEmpty: true

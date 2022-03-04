@@ -21,7 +21,7 @@ spec:
   project: default
   source:
     path: argocd/projects
-    repoURL: https://github.com/jtcressy/homelab.git
+    repoURL: git@github.com:jtcressy/homelab.git
   syncPolicy:
     automated:
       allowEmpty: true
