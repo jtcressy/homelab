@@ -9,14 +9,11 @@ on:
     - 'argocd/*'
     - 'argocd/**'
     - '.github/workflows/argocd-init.yml'
-
+permissions: write-all
 jobs:
   argocd-init:
     concurrency: argocd-init
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: write
     services:
       op-connect-sync:
         image: 1password/connect-api:latest
