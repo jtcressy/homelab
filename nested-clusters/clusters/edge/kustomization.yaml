@@ -19,9 +19,9 @@ resources:
 # - apiserver-ingress.yaml
 images:
 - name: rancher/k3s
-  newTag: v1.21.9-k3s1
+  newTag: v1.22.7-k3s1
 - name: ghcr.io/tailscale/tailscale
-  newTag: v1.20.4
+  newTag: v1.22.0
 replicas:
 - name: k3s-server
   count: 3
