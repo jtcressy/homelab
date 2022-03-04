@@ -80,9 +80,9 @@ jobs:
     - name: Check for ArgoCD Namespace
       run: |
         if kubectl get ns argocd; then
-          echo "::set-env name=namespace_exists::true"
+          echo "namespace_exists=true" >> $GITHUB_ENV
         else
-          echo "::set-env name=namespace_exists::false"
+          echo "namespace_exists=false" >> $GITHUB_ENV
         fi
     
     - name: Bootstrap ArgoCD
