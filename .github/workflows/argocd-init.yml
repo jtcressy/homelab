@@ -91,7 +91,7 @@ jobs:
         kubectl wait --for=condition=available --timeout=60s -n argocd deployments --all
         if ! argocd --core repo get "git@github.com:jtcressy/homelab.git"; then
           ssh-keygen -b 2048 -t rsa -f /tmp/ssh-deploy-key -q -N ""
-          echo " ${{ secrets.GITHUB_TOKEN }}" | gh auth login -h github.com --with-token
+          echo " ${{ secrets.GH_PAT }}" | gh auth login -h github.com --with-token
           gh repo deploy-key add --title argocd-primary /tmp/ssh-deploy-key.pub
           argocd --core admin repo generate-spec "git@github.com:jtcressy/homelab.git" --ssh-private-key-path /tmp/ssh-deploy-key
         fi
