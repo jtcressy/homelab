@@ -37,7 +37,7 @@ spec:
   - git:
       files:
       - path: argocd/apps/**/primary/config.json
-      repoURL: https://github.com/jtcressy/homelab.git
+      repoURL: git@github.com:jtcressy/homelab.git
       requeueAfterSeconds: 20
       revision: ""
       template:
@@ -50,7 +50,7 @@ spec:
   - git:
       files:
       - path: argocd/apps/**/primary/config_dir.json
-      repoURL: https://github.com/jtcressy/homelab.git
+      repoURL: git@github.com:jtcressy/homelab.git
       requeueAfterSeconds: 20
       revision: ""
       template:
@@ -69,7 +69,6 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/managed-by: argocd-autopilot
         app.kubernetes.io/name: '{{ appName }}'
       name: primary-{{ userGivenName }}
       namespace: argocd
