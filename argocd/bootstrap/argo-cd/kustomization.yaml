@@ -8,6 +8,7 @@ kind: Kustomization
 namespace: argocd
 resources:
 - github.com/argoproj/argo-cd/manifests/ha/cluster-install?ref=v2.2.5
+- github.com/argoproj/applicationset/manifests/namespace-install?ref=v0.4.0
 patches:
   # reset the crbs to `subject.namespace: default`, so that argo-cd will later change them to the actual ns
   - target:
