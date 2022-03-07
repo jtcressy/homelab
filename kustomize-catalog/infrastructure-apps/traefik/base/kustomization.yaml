@@ -6,5 +6,5 @@ resources:
   - cf-tunnel-secret.yaml
   - cf-tunnel-config.yaml
   - traefik-pilot-secret.yaml
-  - release.yaml
+  - helm-app.yaml
   - dashboard-route.yaml
