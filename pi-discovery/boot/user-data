@@ -69,8 +69,9 @@ runcmd:
   [ -f /boot/firmware/k3s_url ] && \
   [ -f /boot/firmware/k3s_agent_token ] && \
   until ip addr show tailscale0; do echo 'Waiting for device "tailscale0" to exist...'; sleep 5; done && \
-  curl -sfL http://get.k3s.io | K3S_URL=$(cat /boot/firmware/k3s_url) K3S_TOKEN_FILE=/boot/firmware/k3s_agent_token sh -s - --flannel-iface tailscale0
-- 'sudo ufw deny in on any'
+  curl -sfL http://get.k3s.io | K3S_URL=$(cat /boot/firmware/k3s_url) K3S_TOKEN_FILE=/boot/firmware/k3s_agent_token INSTALL_K3S_VERSION=v1.21.10+k3s1 sh -s - --flannel-iface tailscale0
+- 'sudo ufw default deny incoming'
+- 'sudo ufw default allow outgoing'
 - 'sudo ufw allow in on tailscale0'
 - 'sudo ufw enable'
 

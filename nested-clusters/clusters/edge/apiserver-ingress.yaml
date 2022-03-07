@@ -13,11 +13,11 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/ssl-redirect: "false"
     traefik.ingress.kubernetes.io/service.serversscheme: https
-  name: home-udm-k8s-apiserver-ingress
+  name: edge-k3s-server-ingress
 spec:
   ingressClassName: traefik
   rules:
-    - host: home-udm-k8s.jtcressy.net
+    - host: edge.jtcressy.net
       http:
         paths:
           - backend:
@@ -26,3 +26,10 @@ spec:
                 port:
                   name: api
             pathType: ImplementationSpecific
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: ServersTransport
+metadata:
+  name: k3s-server
+spec:
+  insecureSkipVerify: true

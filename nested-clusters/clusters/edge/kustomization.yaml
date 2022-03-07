@@ -16,6 +16,7 @@ transformers:
 resources:
 - ../../base
 - onepass-k3s-token.yaml
+- apiserver-ingress.yaml
 # - apiserver-ingress.yaml
 images:
 - name: rancher/k3s
@@ -33,3 +34,13 @@ configMapGenerator:
   behavior: merge
   literals:
   - CLUSTER_NAME=edge
+patchesStrategicMerge:
+  - |-
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: k3s-server
+      namespace: k3s-cluster
+      annotations:
+        traefik.ingress.kubernetes.io/service.serversscheme: https
+        traefik.ingress.kubernetes.io/service.serverstransport: k3s-cluster-edge-k3s-server@kubernetescrd
