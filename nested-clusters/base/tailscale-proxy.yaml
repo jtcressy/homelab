@@ -70,8 +70,9 @@ spec:
             mknod /dev/net/tun c 10 200
             tailscaled --state=kube:${KUBE_SECRET} &
             PID=$!
-            tailscale up --accept-dns --authkey=${AUTH_KEY} --hostname=${HOSTNAME}
-            iptables -t nat -I PREROUTING -d "$(tailscale ip -4)" -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
+            tailscale up --accept-dns=false --accept-routes --authkey=${AUTH_KEY} --hostname=${HOSTNAME}
+            until tailscale ip -4 | grep 100; do echo 'Waiting for ip address on "tailscale0" to exist...'; sleep 5; done &&
+            iptables -t nat -I PREROUTING -i tailscale0 -j DNAT --to-destination "$(getent hosts ${DEST_IP} | awk '{ print $1 }')"
             wait ${PID}
         readinessProbe:
           initialDelaySeconds: 5

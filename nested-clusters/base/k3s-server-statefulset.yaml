@@ -47,6 +47,40 @@ spec:
           requests:
             cpu: 1m
             memory: 1Mi
+      - name: k3s-init-check
+        image: alpine/curl
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - |
+          export K3S_URL="https://k3s-server:6443"
+          echo "Checking for healthy servers at $K3S_URL"
+          if curl -s -m 5 -k -u "server:$K3S_TOKEN" $K3S_URL/db/info | grep "members"; then
+            echo "Healthy servers exist, skipping cluster init."
+            echo "0" > /var/lib/rancher/k3s/cluster_init
+          else
+            echo "No healthy servers responded. Initializing cluster."
+            echo "1" > /var/lib/rancher/k3s/cluster_init
+          fi
+        env:
+        - name: K3S_CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              key: CLUSTER_NAME
+              name: cluster-facts
+        - name: K3S_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: k3s-cluster-secrets
+              key: server-token
+        volumeMounts:
+        - name: k3s-server
+          mountPath: /var/lib/rancher/k3s
+        resources:
+          requests:
+            cpu: 1m
+            memory: 1Mi
       containers:
       - name: k3s-server
         image: rancher/k3s:latest
@@ -61,12 +95,15 @@ spec:
         - /bin/sh
         - -c
         - >
-          if [[ "$K3S_NODE_NAME" == *"server-0"* ]]; then unset K3S_URL; export K3S_CLUSTER_INIT=1; fi &&
           until ip addr show tailscale0; do echo 'Waiting for device "tailscale0" to exist...'; sleep 5; done &&
+          export K3S_URL="https://$K3S_CLUSTER_NAME-k3s-server:6443" &&
+          if [ "$(cat /var/lib/rancher/k3s/cluster_init)" == "1" ]; then
+            export K3S_CLUSTER_INIT=1
+            unset K3S_URL
+          fi &&
           export TAILSCALE_IP=$(ip addr show tailscale0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1) &&
           echo "Starting k3s with tailscale0 ip: $TAILSCALE_IP" &&
           echo "K3S Node Name: $K3S_NODE_NAME" &&
-          if [[ -z $K3S_CLUSTER_INIT ]]; then export K3S_URL="https://$K3S_CLUSTER_NAME-k3s-server:6443"; echo "K3S_URL: $K3S_URL"; fi &&
           k3s server
           --tls-san $TAILSCALE_IP
           --flannel-iface tailscale0
@@ -77,6 +114,9 @@ spec:
           --node-label node.kubernetes.io/role=master
           --node-taint node-role.kubernetes.io/master=true:NoSchedule
         readinessProbe:
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 5
           exec:
             command:
               - /bin/sh
@@ -85,6 +125,8 @@ spec:
                 [[ "$(kubectl get node $K3S_NODE_NAME | grep Ready)" =~ "$K3S_NODE_NAME" ]]
         livenessProbe:
           initialDelaySeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 5
           exec:
             command:
               - /bin/sh
@@ -98,7 +140,7 @@ spec:
                 - /bin/sh
                 - -c
                 - >
-                  kubectl drain $K3S_NODE_NAME --delete-local-data=true --ignore-daemonsets=true
+                  kubectl drain $K3S_NODE_NAME --delete-emptydir-data=true --ignore-daemonsets=true
         ports:
         - containerPort: 6443
           name: api
