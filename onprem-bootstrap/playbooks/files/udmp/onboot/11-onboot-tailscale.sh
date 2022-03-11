@@ -1,11 +1,13 @@
 #!/bin/sh
 CONTAINER=tailscaled
-IMAGE=ghcr.io/tailscale/tailscale:v1.22.0
+IMAGE=ghcr.io/tailscale/tailscale:v1.22.1
 # Starts a Tailscale container that is deleted after it is stopped.
 # All configs stored in /mnt/data/tailscale
 
 # Temporary workaround: copy default route to main table so that tailscale properly discovers it
-if ![ "$(ip -4 route show)" ~= "default via" ] && [ "$(ip -4 route show table 201)" ~= "default via" ]; then
+TABLE=$(ip -4 route show)
+TABLE201=$(ip -4 route show table 201)
+if [ "${TABLE}" == "${TABLE/default via/}" ] && [ "${TABLE201}" != "${TABLE201/default via/}" ]; then
   ip route add $(ip -4 route show table 201 | grep "default via" | sed -r 's/table 201 /table 0 /g' | sed -r 's/proto dhcp//g')
 fi
 

@@ -1,0 +1,18 @@
+---
+- name: "{{ item.name }} - ensure destination folder exists ({{ destination_folder }})"
+  raw: mkdir -pv "{{ destination_folder }}"
+  register: mkdir
+  changed_when: "'created directory' in mkdir.stdout"
+- name: "{{ item.name }} - slurp file"
+  delegate_to: localhost
+  slurp:
+    src: "{{ item.src }}"
+  register: file
+- name: check for file diff
+  changed_when: "false"
+  raw: echo "{{ file.content }}" | openssl enc -base64 -d -A | diff {{ destination_folder }}{{ item.src.split("/")[-1] }} -
+  register: file_diff
+- name: "{{ item.name }} - decode base64 and save to destination"
+  changed_when: "file_diff.rc != 0"
+  raw: |
+    [ '{{ item.enabled }}' = 'True' ] && echo "{{ file.content }}" | openssl enc -base64 -d -A > {{ destination_folder }}{{ item.src.split("/")[-1] }}

@@ -6,7 +6,7 @@ KEYS_RC=-1
 COUNT=0
 while [ ${KEYS_RC} -ne 0 ] && [ ${COUNT} -lt 60 ]
 do
-    KEYS_DATA=$(podman exec unifi-os mongo --port 27117 --eval 'db.setting.find({key: {$eq: "mgmt"}), {x_ssh_keys: 1, _id: 0});' --quiet ace)
+    KEYS_DATA=$(podman exec unifi-os mongo --port 27117 --eval 'db.setting.find({key: {$eq: "mgmt"}}, {x_ssh_keys: 1, _id: 0});' --quiet ace)
     KEYS_RC=$?
     COUNT=$(( COUNT+1 ))
     [ ${KEYS_RC} -ne 0 ] && [ ${COUNT} -lt 60 ] && sleep 10

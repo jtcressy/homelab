@@ -2,16 +2,26 @@
 #playbook.yaml
 
 - name: Check all nodes
-  hosts: raspberrypi,unifiudm
+  hosts: all
   gather_facts: false
   tasks:
     - name: DISPLAY HOST VAR
       debug:
         msg: "The mgmt IP is {{ ansible_host }}"
+    - name: ssh keyscan
+      delegate_to: localhost
+      raw: "ssh-keyscan {{ ansible_host }}"
+      register: keyscan
+      changed_when: "false"
     - name: Save known hosts
       delegate_to: localhost
-      raw: "ssh-keyscan -H {{ inventory_hostname }} >> ~/.ssh/known_hosts"
-      ignore_errors: yes
+      with_items: "{{ keyscan.stdout_lines }}"
+      known_hosts:
+        name: "{{ ansible_host }}"
+        key: "{{ item }}"
+        state: present
+        path: ~/.ssh/known_hosts
+        hash_host: no
     - name: Check connection
       raw: uname -a
       register: command_output
@@ -22,6 +32,3 @@
 
 - name: SETUP UDM PRO
   import_playbook: playbooks/udmp.yml
-  
-- name: SETUP RASPBERRY PI NODES
-  import_playbook: playbooks/raspberrypi.yml

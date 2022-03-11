@@ -19,6 +19,7 @@
     register: onboot_version
     raw: "{{ unifi_os_cmd }} dpkg-query --showformat='${Version}' --show udm-boot"
     ignore_errors: true
+    changed_when: "false"
 
   - name: onboot - installation
     when: onboot_version is not defined or ( onboot_version.stdout is defined and onboot_version.stdout != udm_onboot_version )
@@ -28,35 +29,41 @@
       - name: onboot - install package
         raw: "{{ unifi_os_cmd }} dpkg -i {{ unifi_os_mount_path }}/udm-boot-{{ udm_onboot_version }}.deb"
 
-  - name: onboot - ensure onboot directory exists
-    raw: mkdir -p "{{ unifi_onboot_directory }}"
-
   - name: onboot - deploy shell scripts
     with_items:
-    - { file: "files/udmp/onboot/00-onboot-sshkeys.sh", enabled: yes }
-    - { file: "files/udmp/onboot/03-onboot-podman-update.sh", enabled: yes }
-    - { file: "files/udmp/onboot/05-onboot-container.sh", enabled: yes }
-    - { file: "files/udmp/onboot/05-onboot-dns.sh", enabled: yes }
-    - { file: "files/udmp/onboot/05-onboot-github-ssh.sh", enabled: yes }
-    - { file: "files/udmp/onboot/05-onboot-podman-cni.sh", enabled: yes }
-    - { file: "files/udmp/onboot/10-onboot-coredns.sh", enabled: yes  }
-    - { file: "files/udmp/onboot/11-onboot-tailscale.sh", enabled: yes }
-    raw: |-
-      [ '{{ item.enabled }}' = 'True' ] && \
-      echo "{{ lookup('file', playbook_dir+'/'+item.file) | b64encode }}" | openssl enc -base64 -d > {{ unifi_onboot_directory }}{{ item.file.split("/")[-1] }}
+    - { name: "sshkeys", src: "files/udmp/onboot/00-onboot-sshkeys.sh", enabled: yes }
+    - { name: "podman_cni", src: "files/udmp/onboot/04-onboot-podman-cni.sh", enabled: yes }
+    - { name: "container", src: "files/udmp/onboot/05-onboot-container.sh", enabled: yes }
+    - { name: "dns", src: "files/udmp/onboot/05-onboot-dns.sh", enabled: yes }
+    - { name: "github_ssh", src: "files/udmp/onboot/05-onboot-github-ssh.sh", enabled: yes }
+    - { name: "coredns", src: "files/udmp/onboot/10-onboot-coredns.sh", enabled: yes }
+    - { name: "tailscale", src: "files/udmp/onboot/11-onboot-tailscale.sh", enabled: yes }
+    include_tasks: tasks/slurp_b64_copy.yml
+    vars:
+      destination_folder: "{{ unifi_onboot_directory }}"
   
   - name: onboot - setup podman cni configs
     with_items:
-    - { file: "files/udmp/podman/cni/20-dns.conflist", enabled: yes }
-    raw: |-
-      [ '{{ item.enabled }}' = 'True' ] && \
-      mkdir -p "{{ unifi_mount_path }}/podman/cni/" && \
-      echo "{{ lookup('file', item.file) | b64encode }}" | openssl enc -base64 -d > {{ unifi_mount_path }}/podman/cni/{{ item.file.split("/")[-1] }}
+    - { name: "cni", src: "files/udmp/podman/cni/20-dns.conflist", enabled: yes }
+    include_tasks: tasks/slurp_b64_copy.yml
+    vars:
+      destination_folder: "{{ unifi_mount_path }}/podman/cni/"
 
   - name: onboot - ensure executable flag for all scripts
-    raw: chmod +x {{ unifi_onboot_directory }}/*.sh
+    raw: chmod -c +x {{ unifi_onboot_directory }}/*.sh
+    register: chmod
+    changed_when: "'changed to' in chmod.stdout"
 
-  - name: onboot - run scripts unless already connected via tailscale
-    # tailscale inventory plugin sets ansible_network_os and is otherwise undefined
-    when: ansible_network_os is not defined
+  - name: onboot - run scripts
     raw: for script in $(ls {{ unifi_onboot_directory }}/*.sh); do sh $script; done;
+
+  - name: tailscale up
+    raw: podman exec tailscaled tailscale up --hostname=$(hostname) --advertise-tags=tag:unifiudm --accept-routes --accept-dns --authkey {{ lookup('hashi_vault', 'secret=generic/data/tailscale:reusable') }}
+
+  - name: tailscale status
+    raw: podman exec tailscaled tailscale status
+    register: tailscale_status
+    changed_when: "false"
+  - debug:
+      msg:
+      - "{{ tailscale_status.stdout }}"
