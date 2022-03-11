@@ -2,7 +2,7 @@
 #playbook.yaml
 
 - name: Check all nodes
-  hosts: all
+  hosts: raspberrypi,unifiudm
   gather_facts: false
   tasks:
     - name: DISPLAY HOST VAR

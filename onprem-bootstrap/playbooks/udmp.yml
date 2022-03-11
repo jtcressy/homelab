@@ -58,7 +58,15 @@
     raw: for script in $(ls {{ unifi_onboot_directory }}/*.sh); do sh $script; done;
 
   - name: tailscale up
-    raw: podman exec tailscaled tailscale up --hostname=$(hostname) --advertise-tags=tag:unifiudm --accept-routes --accept-dns --authkey {{ lookup('hashi_vault', 'secret=generic/data/tailscale:reusable') }}
+    raw: |
+      podman exec tailscaled tailscale up \
+        --hostname=$(hostname) \
+        --advertise-tags=tag:unifiudm \
+        --advertise-routes=$(ip -4 route show | grep 192.168 | grep / | tr -s ' ' | cut -d ' ' -f 0 | paste -d',' -s) \
+        --advertise-exit-node \
+        --accept-routes \
+        --accept-dns \
+        --authkey {{ lookup('hashi_vault', 'secret=generic/data/tailscale:reusable') }}
 
   - name: tailscale status
     raw: podman exec tailscaled tailscale status
