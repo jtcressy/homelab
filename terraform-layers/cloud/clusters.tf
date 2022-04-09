@@ -25,9 +25,25 @@ resource "google_container_cluster" "primary" {
   location              = data.google_compute_zones.current.names[0]
   node_locations        = slice(data.google_compute_zones.current.names, 1, 3)
   enable_shielded_nodes = false
-  min_master_version    = "1.21.9"
+  min_master_version    = "1.22.7"
   resource_labels = {
     "goog-gameservices" = ""
+  }
+
+  cluster_autoscaling {
+    enabled = true
+    autoscaling_profile = "OPTIMIZE_UTILIZATION"
+    resource_limits {
+      resource_type = "cpu"
+      maximum = "32"
+    }
+    resource_limits {
+      resource_type = "memory"
+      maximum = "128"
+    }
+    auto_provisioning_defaults {
+      image_type = "COS_CONTAINERD"
+    }
   }
 
   remove_default_node_pool = true
